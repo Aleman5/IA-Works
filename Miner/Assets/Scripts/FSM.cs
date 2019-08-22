@@ -1,9 +1,9 @@
-﻿public class FSM
+﻿public class VillagerFSM
 {
     private int[,] fsm;
     private int currentState;
 
-    public FSM(int stateCount, int eventCount, int initState)
+    public VillagerFSM(int stateCount, int eventCount, int initState)
     {
 
         fsm = new int[stateCount, eventCount];
