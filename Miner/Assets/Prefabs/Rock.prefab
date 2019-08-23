@@ -9,9 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5620166852962454246}
+  - component: {fileID: 3058310756929305648}
+  - component: {fileID: 4542804924905989706}
   m_Layer: 0
   m_Name: Rock
-  m_TagString: Untagged
+  m_TagString: Mine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,6 +33,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3058310756929305648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9158322401306722867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15afee97c7b9ee14ca398b23bb1fef40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mineralsLeft: 45
+  onDestroy:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!65 &4542804924905989706
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9158322401306722867}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2, y: 2, z: 1.35}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7501650009710184150
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44,7 +77,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.81
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -52,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.38
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalRotation.x
