@@ -12,6 +12,6 @@ public class MinerMovement : MonoBehaviour
 
         float finalMovementSpeed = movementSpeed - maxMovementSpeedReduced * percReduced;
 
-        transform.Translate(transform.forward * finalMovementSpeed * Time.deltaTime);
+        transform.Translate(Vector3.forward * finalMovementSpeed * Time.deltaTime);
     }
 }

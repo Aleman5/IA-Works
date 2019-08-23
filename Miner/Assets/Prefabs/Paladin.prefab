@@ -59,8 +59,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3fcea9513873745a0f4b28be6a4472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miningSpeed: 1.5
+  miningSpeed: 2
   maxMineralsHandle: 10
+  mineralsHandling: 0
 --- !u!114 &5845019586394647430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d5adad7fe3cb3641b8e60b678e953e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
-  maxMovementSpeedReduced: 4
+  movementSpeed: 4
+  maxMovementSpeedReduced: 2
   percReduced: 0
 --- !u!114 &3667569850524417965
 MonoBehaviour:
@@ -108,9 +109,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7021355920442194626}
     m_Modifications:
-    - target: {fileID: 100074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_Name
-      value: Paladin Model
+    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.000000018564487
+      objectReference: {fileID: 0}
+    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.0077722026
       objectReference: {fileID: 0}
     - target: {fileID: 400074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -156,10 +161,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.000000421299
+      objectReference: {fileID: 0}
+    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.0041437857
+      objectReference: {fileID: 0}
+    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.00006283205
+      objectReference: {fileID: 0}
+    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.016955834
+      objectReference: {fileID: 0}
+    - target: {fileID: 100074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_Name
+      value: Paladin Model
+      objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 28bbcaed341281b4486e7bdeca6d4b01, type: 2}
+    - target: {fileID: 9500000, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 13700006, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_Bones.Array.data[0]
       value: 
@@ -412,30 +441,6 @@ PrefabInstance:
       propertyPath: m_RootBone
       value: 
       objectReference: {fileID: 7021355919434427915}
-    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.000000018564487
-      objectReference: {fileID: 0}
-    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.0077722026
-      objectReference: {fileID: 0}
-    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.00006283205
-      objectReference: {fileID: 0}
-    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.016955834
-      objectReference: {fileID: 0}
-    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.000000421299
-      objectReference: {fileID: 0}
-    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0041437857
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
 --- !u!4 &7021355919434427973 stripped
