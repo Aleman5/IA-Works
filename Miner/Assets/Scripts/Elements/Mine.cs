@@ -11,6 +11,7 @@ public class Mine : MonoBehaviour
     void Awake()
     {
         element = Element.Mine;
+        miners = new List<Miner>();
     }
 
     public void AddMiner(Miner thisM)

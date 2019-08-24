@@ -17,7 +17,7 @@ public class Miner : Villager
         mAnimations.IsWalking(false);
 
         mine = GameManager.Instance.FindClosestMine(transform.position);
-
+        
         if (mine)
         {
             OnObjectiveFound();
@@ -82,8 +82,6 @@ public class Miner : Villager
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Colisione perreke");
-
         if (other.tag == "Base" && returnToBase)
         {
             theBase.DeliverMinerals(mineralsHandling);

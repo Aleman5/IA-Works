@@ -4,3 +4,10 @@
     Mine,
     Count
 }
+
+public enum NodeState
+{
+    Ok,
+    Open,
+    Close
+}

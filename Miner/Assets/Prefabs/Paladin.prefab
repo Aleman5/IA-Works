@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 8582646502268814007}
   - component: {fileID: 5845019586394647430}
   - component: {fileID: 3667569850524417965}
+  - component: {fileID: 7021355920147638006}
   - component: {fileID: 6414352222106102858}
   m_Layer: 0
   m_Name: Paladin
@@ -89,6 +90,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ee28c4af6bd404da5de27796bdaf41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &7021355920147638006
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7021355920442194625}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!65 &6414352222106102858
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -109,13 +126,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7021355920442194626}
     m_Modifications:
-    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.000000018564487
-      objectReference: {fileID: 0}
-    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.0077722026
+    - target: {fileID: 100074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_Name
+      value: Paladin Model
       objectReference: {fileID: 0}
     - target: {fileID: 400074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -160,26 +173,6 @@ PrefabInstance:
     - target: {fileID: 400074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.000000421299
-      objectReference: {fileID: 0}
-    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0041437857
-      objectReference: {fileID: 0}
-    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.00006283205
-      objectReference: {fileID: 0}
-    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.016955834
-      objectReference: {fileID: 0}
-    - target: {fileID: 100074, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
-      propertyPath: m_Name
-      value: Paladin Model
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
       propertyPath: m_Controller
@@ -441,6 +434,30 @@ PrefabInstance:
       propertyPath: m_RootBone
       value: 
       objectReference: {fileID: 7021355919434427915}
+    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.000000018564487
+      objectReference: {fileID: 0}
+    - target: {fileID: 400076, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.0077722026
+      objectReference: {fileID: 0}
+    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.00006283205
+      objectReference: {fileID: 0}
+    - target: {fileID: 400080, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.016955834
+      objectReference: {fileID: 0}
+    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.000000421299
+      objectReference: {fileID: 0}
+    - target: {fileID: 400092, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.0041437857
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76d7f592e8fde784896b8a682ff8f48d, type: 3}
 --- !u!4 &7021355919434427973 stripped

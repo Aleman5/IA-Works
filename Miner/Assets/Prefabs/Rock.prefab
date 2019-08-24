@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9158322401306722867}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.317, y: 0.995, z: 11.92}
+  m_LocalPosition: {x: 1.35, y: 1, z: 11.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7501650009710058582}
@@ -57,7 +57,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.2, y: 2, z: 1.35}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7501650009710184150
 PrefabInstance:
@@ -66,13 +66,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5620166852962454246}
     m_Modifications:
+    - target: {fileID: 100000, guid: c460462b661127b48826beb7957f94f7, type: 3}
+      propertyPath: m_Name
+      value: Rock Model
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -109,10 +113,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: c460462b661127b48826beb7957f94f7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: c460462b661127b48826beb7957f94f7, type: 3}
-      propertyPath: m_Name
-      value: Rock Model
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c460462b661127b48826beb7957f94f7, type: 3}
