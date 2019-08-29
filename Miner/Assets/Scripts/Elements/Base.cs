@@ -16,22 +16,20 @@ public class Base : MonoBehaviour
         MaterialsManager.Instance.IncreaseMineralsCapacity(mineralsLimit);
     }
 
-    public int DeliverMinerals(int amount)
+    public void DeliverMinerals(ref int amount)
     {
         MaterialsManager mM = MaterialsManager.Instance;
 
-        int refund = amount;
+        int deliver = amount;
 
         if (mM.actualMinerals < mM.maxMinerals)
         {
             if (mM.actualMinerals + amount > mM.maxMinerals)
-                amount = mM.maxMinerals - mM.actualMinerals;
+                deliver = mM.maxMinerals - mM.actualMinerals;
 
-            refund -= amount;
-            mM.actualMinerals += amount;
+            amount -= deliver;
+            mM.actualMinerals += deliver;
         }
-
-        return refund;
     }
 
     public Element GetElementType()

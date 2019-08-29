@@ -1,16 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    List<Node> ady;
-    NodeState nodeState;
+    Node predecesor = null; 
+    public NodeState nodeState;
+    NodeAdy[] ady;
     bool isObstacle = false;
 
-    public void AddAdyNode(Node node)
+    void Awake()
     {
-        ady.Add(node);
+        ady = new NodeAdy[(int)AdyDirection.Count];
+
+        for (int i = 0; i < ady.Length; i++)
+        {
+            ady[i].node = null;
+            ady[i].type = NodeAdyType.Straight;
+        }
+    }
+
+    public void AddAdyNode(Node node, NodeAdyType type, AdyDirection direction)
+    {
+        ady[(int)direction].node = node;
+        ady[(int)direction].type = type;
+    }
+
+    public NodeAdy[] GetNodeAdyacents()
+    {
+        return ady;
     }
 
     public bool IsObstacle
@@ -22,4 +38,9 @@ public class Node : MonoBehaviour
         }
     }
 
+    public Node Predecesor
+    {
+        get { return predecesor;  }
+        set { predecesor = value; }
+    }
 }

@@ -84,7 +84,7 @@ public class Miner : Villager
     {
         if (other.tag == "Base" && returnToBase)
         {
-            theBase.DeliverMinerals(mineralsHandling);
+            theBase.DeliverMinerals(ref mineralsHandling);
             OnBaseCollision();
         }
         else if (other.tag  == "Mine" && !returnToBase)

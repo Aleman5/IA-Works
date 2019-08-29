@@ -28,7 +28,7 @@ public class Mine : MonoBehaviour
     {
         mineralsLeft--;
 
-        if (mineralsLeft == 0)
+        if (mineralsLeft >= 0)
         {
             foreach (Miner miner in miners)
                 miner.MineDestroyed();
