@@ -16,7 +16,7 @@ public class PathGenerator : MonoBehaviour
         {
             if (hit.transform.tag == "Obstacle")
             {
-                OpenNode(start);
+                OpenNode(start, null);
 
                 while(openNodes.Count > 0)
                 {
@@ -48,12 +48,6 @@ public class PathGenerator : MonoBehaviour
         node.nodeState = NodeState.Close;
         openNodes.Remove(node);
         closeNodes.Add(node);
-    }
-
-    static void OpenNode(Node node)
-    {
-        node.nodeState = NodeState.Open;
-        openNodes.Add(node);
     }
 
     static void OpenNode(Node node, Node opener)
