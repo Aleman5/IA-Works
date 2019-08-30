@@ -60,16 +60,16 @@ public class NodeGenerator : MonoBehaviour
                 if (nodes[i][j])
                 {
                     // Directos
-                    if (i+1 < planeWidth  && nodes[i+1][j]) nodes[i][j].AddAdyNode(nodes[i+1][j], ENodeAdyType.Straight, EAdyDirection.Up);
-                    if (j+1 < planeHeight && nodes[i][j+1]) nodes[i][j].AddAdyNode(nodes[i][j+1], ENodeAdyType.Straight, EAdyDirection.Right);
-                    if (i-1 >= 0          && nodes[i-1][j]) nodes[i][j].AddAdyNode(nodes[i-1][j], ENodeAdyType.Straight, EAdyDirection.Down);
-                    if (j-1 >= 0          && nodes[i][j-1]) nodes[i][j].AddAdyNode(nodes[i][j-1], ENodeAdyType.Straight, EAdyDirection.Left);
+                    if (i+1 < planeWidth  && nodes[i+1][j]) nodes[i][j].AddAdyNode(nodes[i+1][j], EAdyDirection.Up);
+                    if (j+1 < planeHeight && nodes[i][j+1]) nodes[i][j].AddAdyNode(nodes[i][j+1], EAdyDirection.Right);
+                    if (i-1 >= 0          && nodes[i-1][j]) nodes[i][j].AddAdyNode(nodes[i-1][j], EAdyDirection.Down);
+                    if (j-1 >= 0          && nodes[i][j-1]) nodes[i][j].AddAdyNode(nodes[i][j-1], EAdyDirection.Left);
 
                     // Diagonales
-                    if (i+1 < planeWidth && j+1 < planeHeight && nodes[i+1][j+1]) nodes[i][j].AddAdyNode(nodes[i+1][j+1], ENodeAdyType.Diagonal, EAdyDirection.UpRight);
-                    if (i+1 < planeWidth && j-1 >= 0          && nodes[i+1][j-1]) nodes[i][j].AddAdyNode(nodes[i+1][j-1], ENodeAdyType.Diagonal, EAdyDirection.UpLeft);
-                    if (i-1 >= 0         && j+1 < planeHeight && nodes[i-1][j+1]) nodes[i][j].AddAdyNode(nodes[i-1][j+1], ENodeAdyType.Diagonal, EAdyDirection.DownRight);
-                    if (i-1 >= 0         && j-1 >= 0          && nodes[i-1][j-1]) nodes[i][j].AddAdyNode(nodes[i-1][j-1], ENodeAdyType.Diagonal, EAdyDirection.DownLeft);
+                    if (i+1 < planeWidth && j+1 < planeHeight && nodes[i+1][j+1]) nodes[i][j].AddAdyNode(nodes[i+1][j+1], EAdyDirection.UpRight);
+                    if (i+1 < planeWidth && j-1 >= 0          && nodes[i+1][j-1]) nodes[i][j].AddAdyNode(nodes[i+1][j-1], EAdyDirection.UpLeft);
+                    if (i-1 >= 0         && j+1 < planeHeight && nodes[i-1][j+1]) nodes[i][j].AddAdyNode(nodes[i-1][j+1], EAdyDirection.DownRight);
+                    if (i-1 >= 0         && j-1 >= 0          && nodes[i-1][j-1]) nodes[i][j].AddAdyNode(nodes[i-1][j-1], EAdyDirection.DownLeft);
                 }
             }
         }

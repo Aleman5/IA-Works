@@ -2,9 +2,11 @@
 
 public class Node : MonoBehaviour
 {
-    Node predecesor = null; 
     public ENodeState nodeState;
+    public NodeValue nodeValue;
+
     NodeAdy[] ady;
+    Node predecesor = null; 
     bool isObstacle = false;
 
     void Awake()
@@ -14,14 +16,17 @@ public class Node : MonoBehaviour
         for (int i = 0; i < ady.Length; i++)
         {
             ady[i].node = null;
-            ady[i].type = ENodeAdyType.Straight;
+            if (i % 2 == 0)
+                ady[i].type = ENodeAdyType.Straight;
+            else
+                ady[i].type = ENodeAdyType.Diagonal;
+
         }
     }
 
-    public void AddAdyNode(Node node, ENodeAdyType type, EAdyDirection direction)
+    public void AddAdyNode(Node node, EAdyDirection direction)
     {
         ady[(int)direction].node = node;
-        ady[(int)direction].type = type;
     }
 
     public NodeAdy[] GetNodeAdyacents()

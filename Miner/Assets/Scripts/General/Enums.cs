@@ -45,6 +45,7 @@ public enum EPathfinderType
 {
     BreadthFirst,
     DepthFirst,
+    Dijkstra,
     Star,
     Count
 }
