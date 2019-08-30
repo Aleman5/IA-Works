@@ -19,11 +19,51 @@ public class SelectionerManager : MonoBehaviour
 
     public Camera mainCamera;
 
-    
-
+    GameObject object1 = null;
+    GameObject object2 = null;
 
     void Update()
     {
+        if (Input.GetButtonDown("LeftClick"))
+        {
+            GameObject go = CheckHit();
 
+            if (!go || go.tag == "Ground")
+            {
+                if (object1) object1 = null;
+            }
+            else
+            {
+                object1 = go;
+            }
+        }
+
+        if (Input.GetButtonDown("RightClick"))
+        {
+            GameObject go = CheckHit();
+
+            if (go && object1)
+            {
+                object2 = go;
+            }
+        }
+
+        if (object1 && object2)
+        {
+            
+        }
+    }
+
+    GameObject CheckHit()
+    {
+        GameObject go = null;
+
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+        {
+            go = hit.transform.gameObject;
+        }
+
+        return go;
     }
 }

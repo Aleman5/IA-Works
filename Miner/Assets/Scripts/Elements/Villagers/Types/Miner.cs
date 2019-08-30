@@ -2,6 +2,9 @@
 
 public class Miner : Villager
 {
+    [Header("Miner")]
+    public float miningSpeed = 1.0f;
+
     Mine mine = null;
 
     protected override void Idle()

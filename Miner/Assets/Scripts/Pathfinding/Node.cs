@@ -3,22 +3,22 @@
 public class Node : MonoBehaviour
 {
     Node predecesor = null; 
-    public NodeState nodeState;
+    public ENodeState nodeState;
     NodeAdy[] ady;
     bool isObstacle = false;
 
     void Awake()
     {
-        ady = new NodeAdy[(int)AdyDirection.Count];
+        ady = new NodeAdy[(int)EAdyDirection.Count];
 
         for (int i = 0; i < ady.Length; i++)
         {
             ady[i].node = null;
-            ady[i].type = NodeAdyType.Straight;
+            ady[i].type = ENodeAdyType.Straight;
         }
     }
 
-    public void AddAdyNode(Node node, NodeAdyType type, AdyDirection direction)
+    public void AddAdyNode(Node node, ENodeAdyType type, EAdyDirection direction)
     {
         ady[(int)direction].node = node;
         ady[(int)direction].type = type;

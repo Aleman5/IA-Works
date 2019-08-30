@@ -1,11 +1,13 @@
-﻿public enum Element
+﻿public enum EElement
 {
+    Miner,
+    Soldier,
     Base,
     Mine,
     Count
 }
 
-public enum AdyDirection
+public enum EAdyDirection
 {
     Up,
     UpRight,
@@ -18,13 +20,13 @@ public enum AdyDirection
     Count
 }
 
-public enum NodeAdyType
+public enum ENodeAdyType
 {
     Straight = 1, // Value = 1
     Diagonal = 2  // Value = 1.4
 }
 
-public enum NodeValueMultipliers
+public enum ENodeValueMultipliers
 {
     Normal = 1,
     Mud = 3,
@@ -32,14 +34,14 @@ public enum NodeValueMultipliers
     Risky = 2,
 }
 
-public enum NodeState
+public enum ENodeState
 {
     Ok,
     Open,
     Close
 }
 
-public enum PathfinderType
+public enum EPathfinderType
 {
     BreadthFirst,
     DepthFirst,

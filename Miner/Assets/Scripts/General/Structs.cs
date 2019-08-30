@@ -1,7 +1,7 @@
 ﻿public struct NodeAdy
 {
     public Node node;
-    public NodeAdyType type;
+    public ENodeAdyType type;
 }
 
 public struct NodeValue
@@ -13,9 +13,9 @@ public struct NodeValue
     public NodeValue(bool isInMud)
     {
         if (!isInMud)
-            value = (int)NodeValueMultipliers.Normal;
+            value = (int)ENodeValueMultipliers.Normal;
         else
-            value = (int)NodeValueMultipliers.Mud;
+            value = (int)ENodeValueMultipliers.Mud;
 
         isDanger = false;
         isRisky = false;
@@ -31,9 +31,9 @@ public struct NodeValue
                 isDanger = value;
 
                 if (isDanger)
-                    this.value *= (int)NodeValueMultipliers.Danger;
+                    this.value *= (int)ENodeValueMultipliers.Danger;
                 else
-                    this.value /= (int)NodeValueMultipliers.Danger;
+                    this.value /= (int)ENodeValueMultipliers.Danger;
             }
         }
     }
@@ -48,9 +48,9 @@ public struct NodeValue
                 isRisky = value;
                 
                 if (isRisky)
-                    this.value *= (int)NodeValueMultipliers.Risky;
+                    this.value *= (int)ENodeValueMultipliers.Risky;
                 else
-                    this.value /= (int)NodeValueMultipliers.Risky;
+                    this.value /= (int)ENodeValueMultipliers.Risky;
             }
         }
     }

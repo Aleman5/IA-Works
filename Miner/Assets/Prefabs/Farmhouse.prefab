@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe559844390c955468f30eeeb2f2d3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  elementType: 2
   mineralsLimit: 100
 --- !u!65 &6055452771830629008
 BoxCollider:

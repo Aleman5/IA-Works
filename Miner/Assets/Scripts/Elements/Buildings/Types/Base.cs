@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 
-public class Base : MonoBehaviour
+public class Base : Building
 {
+    [Header("Base Variables")]
     public int mineralsLimit = 0;
-
-    Element element;
 
     void Awake()
     {
-        element = Element.Base;
+        
     }
 
     void Start()
@@ -30,10 +29,5 @@ public class Base : MonoBehaviour
             amount -= deliver;
             mM.actualMinerals += deliver;
         }
-    }
-
-    public Element GetElementType()
-    {
-        return element;
     }
 }

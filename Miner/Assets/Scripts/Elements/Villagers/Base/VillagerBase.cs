@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 
-public abstract class VillagerBase : MonoBehaviour
+public abstract class VillagerBase : Element
 {
-    [Header("Variables")]
-    public float miningSpeed = 1.0f;
+    [Header("Villager")]
     public int maxMineralsHandle = 0;
     public int mineralsHandling = 0;
 

@@ -7,35 +7,31 @@ public class PathGenerator : MonoBehaviour
     static List<Node> openNodes = new List<Node>();
     static List<Node> closeNodes = new List<Node>();
 
-    public static List<Vector3> GetPath(Node start, Node finish, PathfinderType pfT)
+    public static List<Vector3> GetPath(Node start, Node finish, EPathfinderType pfT)
     {
         Vector3 diff = finish.transform.position - start.transform.position;
+        Vector3 dir = diff.normalized;
         RaycastHit hit;
 
-        if (Physics.Raycast(start.transform.position, diff.normalized, out hit, diff.magnitude))
+        if (Physics.Raycast(start.transform.position + dir * 0.5f, diff.normalized, out hit, diff.magnitude - 1.0f))
         {
-            if (hit.transform.tag == "Obstacle")
+            OpenNode(start, null);
+
+            while(openNodes.Count > 0)
             {
-                OpenNode(start, null);
+                Node actualNode = GetOpenNode(pfT);
 
-                while(openNodes.Count > 0)
+                if (actualNode == finish)
                 {
-                    Node actualNode = GetOpenNode(pfT);
-
-                    if (actualNode == finish)
-                    {
-                        MakePath(actualNode);
-                        break;
-                    }
-
-                    CloseNode(actualNode);
-                    OpenAdyNodes(actualNode);
+                    MakePath(actualNode);
+                    break;
                 }
 
-                CleanNodes();
+                CloseNode(actualNode);
+                OpenAdyNodes(actualNode);
             }
-            else
-                MakePath(start, finish);
+
+            CleanNodes();
         }
         else
             MakePath(start, finish);
@@ -45,14 +41,14 @@ public class PathGenerator : MonoBehaviour
 
     static void CloseNode(Node node)
     {
-        node.nodeState = NodeState.Close;
+        node.nodeState = ENodeState.Close;
         openNodes.Remove(node);
         closeNodes.Add(node);
     }
 
     static void OpenNode(Node node, Node opener)
     {
-        node.nodeState = NodeState.Open;
+        node.nodeState = ENodeState.Open;
         node.Predecesor = opener;
         openNodes.Add(node);
     }
@@ -61,26 +57,26 @@ public class PathGenerator : MonoBehaviour
     {
         NodeAdy[] adyNodes = node.GetNodeAdyacents();
 
-        for (int i = 0; i < (int)AdyDirection.Count; i++)
-            if (adyNodes[i].node && !adyNodes[i].node.IsObstacle && adyNodes[i].node.nodeState == NodeState.Ok)
+        for (int i = 0; i < (int)EAdyDirection.Count; i++)
+            if (adyNodes[i].node && !adyNodes[i].node.IsObstacle && adyNodes[i].node.nodeState == ENodeState.Ok)
                 OpenNode(adyNodes[i].node, node);
     }
 
-    static Node GetOpenNode(PathfinderType pfT)
+    static Node GetOpenNode(EPathfinderType pfT)
     {
         Node node = null;
 
         switch(pfT)
         {
-            case PathfinderType.BreadthFirst:
+            case EPathfinderType.BreadthFirst:
                 node = openNodes[0];
             break;
 
-            case PathfinderType.DepthFirst:
+            case EPathfinderType.DepthFirst:
                 node = openNodes[openNodes.Count - 1];
             break;
 
-            case PathfinderType.Star:
+            case EPathfinderType.Star:
                 
             break;
         }
@@ -117,14 +113,14 @@ public class PathGenerator : MonoBehaviour
     {
         while(openNodes.Count > 0)
         {
-            openNodes[0].nodeState = NodeState.Ok;
+            openNodes[0].nodeState = ENodeState.Ok;
             openNodes[0].Predecesor = null;
             openNodes.RemoveAt(0);
         }
 
         while(closeNodes.Count > 0)
         {
-            closeNodes[0].nodeState = NodeState.Ok;
+            closeNodes[0].nodeState = ENodeState.Ok;
             closeNodes[0].Predecesor = null;
             closeNodes.RemoveAt(0);
         }

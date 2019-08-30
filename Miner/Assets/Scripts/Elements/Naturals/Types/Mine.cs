@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Mine : MonoBehaviour
+public class Mine : Natural
 {
-    public int mineralsLeft = 1;
-
     List<Miner> miners;
-    Element element;
 
-    void Awake()
+    override protected void Awake()
     {
-        element = Element.Mine;
+        base.Awake();
+
+        materialsLeft = 100;
+
         miners = new List<Miner>();
     }
 
@@ -26,19 +26,14 @@ public class Mine : MonoBehaviour
 
     public void RemoveMaterial()
     {
-        mineralsLeft--;
+        materialsLeft--;
 
-        if (mineralsLeft >= 0)
+        if (materialsLeft >= 0)
         {
             foreach (Miner miner in miners)
                 miner.MineDestroyed();
             GameManager.Instance.RemoveMine(this);
             Destroy(gameObject);
         }
-    }
-
-    public Element GetElementType()
-    {
-        return element;
     }
 }

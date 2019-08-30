@@ -16,8 +16,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public NodeGenerator nodeGenerator;
     public Base theBase;
-
     public List<Mine> mines;
 
     void Start()
@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
         }
 
         return mines[index];
+    }
+
+    public Node FindClosestNode(Vector3 pos)
+    {
+        return nodeGenerator.GetClosestNode(pos);
     }
 
     public void RemoveMine(Mine thisMine)
