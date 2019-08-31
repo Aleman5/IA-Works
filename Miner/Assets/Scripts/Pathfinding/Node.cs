@@ -4,6 +4,7 @@ public class Node : MonoBehaviour
 {
     public ENodeState nodeState;
     public NodeValue nodeValue;
+    public bool taken = false;
 
     NodeAdy[] ady;
     Node predecesor = null; 

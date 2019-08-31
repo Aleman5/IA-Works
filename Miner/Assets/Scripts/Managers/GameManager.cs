@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     }
 
     public NodeGenerator nodeGenerator;
+    public PathGenerator pathGenerator;
     public Base theBase;
     public List<Mine> mines;
 

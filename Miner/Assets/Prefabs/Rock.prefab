@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elementType: 3
+  materialsHandle: 50
 --- !u!65 &4542804924905989706
 BoxCollider:
   m_ObjectHideFlags: 0

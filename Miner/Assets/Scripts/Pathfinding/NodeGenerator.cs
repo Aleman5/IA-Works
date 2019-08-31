@@ -44,7 +44,10 @@ public class NodeGenerator : MonoBehaviour
                         nodes[i][j] = node;
 
                         if (hit.collider.tag == "Mine" || hit.collider.tag == "Base")
+                        {
+                            node.taken = true;
                             node.IsObstacle = true;
+                        }
                     }
                 }
                 actualPos.x += 1.0f;

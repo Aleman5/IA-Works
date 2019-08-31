@@ -4,14 +4,14 @@ using UnityEngine;
 public class PathGenerator : MonoBehaviour
 {
     [Header("PostProcessing")]
-    public static bool thetaStarMode = false;
+    public bool thetaStarMode = false;
 
-    static List<Node> openNodes = new List<Node>();
-    static List<Node> closeNodes = new List<Node>();
+    List<Node> openNodes = new List<Node>();
+    List<Node> closeNodes = new List<Node>();
 
-    static Node finishNode = null;
+    Node finishNode = null;
 
-    public static List<Node> GetPath(Node start, Node finish, EPathfinderType pfT)
+    public List<Node> GetPath(Node start, Node finish, EPathfinderType pfT)
     {
         List<Node> path = new List<Node>();
 
@@ -59,14 +59,14 @@ public class PathGenerator : MonoBehaviour
         return path;
     }
 
-    static void CloseNode(Node node)
+    void CloseNode(Node node)
     {
         node.nodeState = ENodeState.Close;
         openNodes.Remove(node);
         closeNodes.Add(node);
     }
 
-    static void OpenNode(Node node, Node opener)
+    void OpenNode(Node node, Node opener)
     {
         node.nodeState = ENodeState.Open;
         node.Predecesor = opener;
@@ -74,7 +74,7 @@ public class PathGenerator : MonoBehaviour
         openNodes.Add(node);
     }
 
-    static void OpenAdyNodes(Node node)
+    void OpenAdyNodes(Node node)
     {
         NodeAdy[] adyNodes = node.GetNodeAdyacents();
 
@@ -83,7 +83,7 @@ public class PathGenerator : MonoBehaviour
                 OpenNode(adyNodes[i].node, node);
     }
 
-    static Node GetOpenNode(EPathfinderType pfT)
+    Node GetOpenNode(EPathfinderType pfT)
     {
         Node node = null;
 
@@ -133,13 +133,13 @@ public class PathGenerator : MonoBehaviour
         return node;
     }
 
-    static void MakePath(ref List<Node> path, Node start, Node finish)
+    void MakePath(ref List<Node> path, Node start, Node finish)
     {
         path.Add(start);
         path.Add(finish);
     }
 
-    static List<Node> MakePath(ref List<Node> path, Node finish)
+    List<Node> MakePath(ref List<Node> path, Node finish)
     {
         path.Add(finish);
 
@@ -156,7 +156,7 @@ public class PathGenerator : MonoBehaviour
         return path;
     }
 
-    static void CleanNodes()
+    void CleanNodes()
     {
         while(openNodes.Count > 0)
         {
@@ -175,12 +175,12 @@ public class PathGenerator : MonoBehaviour
         }
     }
 
-    static int Heuristic(Node actualNode)
+    int Heuristic(Node actualNode)
     {
-        return (int)Mathf.Abs((finishNode.transform.position - actualNode.transform.position).magnitude);
+        return (int)Mathf.Abs(Mathf.Round((actualNode.transform.position - finishNode.transform.position).magnitude));
     }
 
-    static void PostProcessThetaStar(ref List<Node> path)
+    void PostProcessThetaStar(ref List<Node> path)
     {
         int actualIndex = path.Count - 1;
 
@@ -190,7 +190,7 @@ public class PathGenerator : MonoBehaviour
 
             Vector3 diff = path[actualIndex - 2].transform.position - path[actualIndex].transform.position;
 
-            if (Physics.Raycast(path[actualIndex].transform.position, diff.normalized, out hit, diff.magnitude))
+            if (!Physics.Raycast(path[actualIndex].transform.position, diff.normalized, out hit, diff.magnitude))
                 path.Remove(path[actualIndex - 1]);
 
             actualIndex--;
