@@ -80,8 +80,10 @@ public class NodeGenerator : MonoBehaviour
 
     public Node GetClosestNode(Vector3 pos)
     {
-        int x = (int)(pos.x - planeWidth / 2 - 1);
-        int y = (int)(pos.z - planeHeight / 2 - 1);
+        int x = (int)(pos.x + (planeWidth  - 1) * 0.5f);
+        int y = (int)(pos.z + (planeHeight - 1) * 0.5f);
+
+        Debug.Log("X: " + x + " Y: " + y);
 
         return nodes[x][y];
     }

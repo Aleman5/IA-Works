@@ -56,7 +56,7 @@ public class PathGenerator : MonoBehaviour
             }
         }
         else
-            MakePath(ref path, start, finish);
+            MakePath(ref path, finish);
 
         return path;
     }
@@ -135,17 +135,10 @@ public class PathGenerator : MonoBehaviour
         return node;
     }
 
-    void MakePath(ref List<Node> path, Node start, Node finish)
-    {
-        path.Add(start);
-        path.Add(finish);
-    }
-
     List<Node> MakePath(ref List<Node> path, Node finish)
     {
-        path.Add(finish);
-
         Node actualNode = finish;
+        path.Add(actualNode);
 
         while(actualNode.Predecesor)
         {

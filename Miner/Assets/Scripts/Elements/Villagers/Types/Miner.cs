@@ -35,32 +35,21 @@ public class Miner : Villager
 
     protected override void Moving()
     {
-        /*
-            Aca tengo que hacer el movimiento del player con el Path que consegui
-        */
-
-        if (returnToBase)
+        if (path != null)
         {
-            
             mMovement.percReduced = mineralsHandling / maxMineralsHandle;
             mAnimations.SetSpeed(mMovement.percReduced);
-            mMovement.Move(theBase.transform.position);
-
-            return;
+            if (mMovement.Move(path[actualPathIndex].transform.position))
+            {
+                actualPathIndex++;
+                if (actualPathIndex == path.Count)
+                {
+                    actualPathIndex = 0;
+                    path = null;
+                    ObjectiveReached();
+                }
+            }
         }
-
-        if (mine)
-        {
-            Vector3 minePos = mine.transform.position;
-            minePos.y = 0.0f;
-            mMovement.percReduced = mineralsHandling / maxMineralsHandle;
-            mAnimations.SetSpeed(mMovement.percReduced);
-            mMovement.Move(minePos);
-
-            return;
-        }
-
-        TryToFind();
     }
 
     protected override void Working()
@@ -89,6 +78,12 @@ public class Miner : Villager
 
     public override void ReactOn(Element objective)
     {
+        if (this.gameObject == objective.gameObject)
+        {
+            path = null;
+            OnObjectiveNotFound();
+        }
+
         switch (objective.elementType)
         {
             case EElement.Ground:
@@ -99,7 +94,10 @@ public class Miner : Villager
                 );
 
                 if (path != null)
+                {
+                    this.objective = objective;
                     OnObjectiveFound();
+                }
                 else
                     OnObjectiveNotFound();
             break;
@@ -110,7 +108,26 @@ public class Miner : Villager
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void ObjectiveReached()
+    {
+        switch (objective.elementType)
+        {
+            case EElement.Mine:
+                mine = objective.GetComponent<Mine>();
+                mine.AddMiner(this);
+                OnMineCollision();
+            break;
+
+            case EElement.Base:
+                theBase.DeliverMinerals(ref mineralsHandling);
+                OnBaseCollision();
+            break;
+        }
+
+        objective = null;
+    }
+
+    /*void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Base" && returnToBase)
         {
@@ -122,5 +139,5 @@ public class Miner : Villager
             mine.AddMiner(this);
             OnMineCollision();
         }
-    }
+    }*/
 }

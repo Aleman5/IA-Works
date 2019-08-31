@@ -18,6 +18,7 @@ public abstract class VillagerBase : Element
     protected MinerAnimations mAnimations;
     protected List<Node> path = null;
     protected int actualPathIndex = 0;
+    protected Element objective;
     protected GameManager gM;
 
     virtual protected void Awake()
@@ -64,6 +65,10 @@ public abstract class VillagerBase : Element
     virtual protected void OnMineCollision()
     {
 
+    }
+    virtual protected void OnObjectiveReached()
+    {
+        
     }
     virtual protected void OnMineDestroyed()
     {

@@ -47,7 +47,7 @@ public class SelectorManager : MonoBehaviour
         {
             Element element = CheckHit();
 
-            if (element && element1 && element != element1)
+            if (element && element1)
             {
                 element2 = element;
             }

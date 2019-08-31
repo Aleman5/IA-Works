@@ -50,11 +50,6 @@ public class GameManager : MonoBehaviour
         return mines[index];
     }
 
-    public Node FindClosestNode(Vector3 pos)
-    {
-        return nodeGenerator.GetClosestNode(pos);
-    }
-
     public void RemoveMine(Mine thisMine)
     {
         foreach (Mine mine in mines)

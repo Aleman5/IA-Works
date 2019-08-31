@@ -6,12 +6,19 @@ public class MinerMovement : MonoBehaviour
     public float maxMovementSpeedReduced = 0.5f;
     public float percReduced = 0.0f;
 
-    public void Move(Vector3 dir)
+    public bool Move(Vector3 objective)
     {
-        transform.LookAt(dir, Vector3.up);
+        objective.y = 0;
+        transform.LookAt(objective, Vector3.up);
 
         float finalMovementSpeed = movementSpeed - maxMovementSpeedReduced * percReduced;
 
         transform.Translate(Vector3.forward * finalMovementSpeed * Time.deltaTime);
+
+        float dist = Vector3.Distance(transform.position, objective);
+
+        if (dist <= 0.08f)
+            return true;
+        return false;
     }
 }
