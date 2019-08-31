@@ -4,6 +4,7 @@
     Soldier,
     Base,
     Mine,
+    Ground,
     Count
 }
 

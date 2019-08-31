@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class VillagerBase : Element
 {
@@ -15,10 +16,15 @@ public abstract class VillagerBase : Element
     protected MinerMovement mMovement;
     protected MinerAction mActions;
     protected MinerAnimations mAnimations;
+    protected List<Node> path = null;
+    protected int actualPathIndex = 0;
+    protected GameManager gM;
 
     virtual protected void Awake()
     {
-        theBase = GameManager.Instance.theBase;
+        gM = GameManager.Instance;
+
+        theBase = gM.theBase;
 
         mMovement   = GetComponent<MinerMovement>();
         mActions    = GetComponent<MinerAction>();

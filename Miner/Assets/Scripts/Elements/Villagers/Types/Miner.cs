@@ -9,17 +9,17 @@ public class Miner : Villager
 
     protected override void Idle()
     {
-        timeLeft -= Time.deltaTime;
+        /*timeLeft -= Time.deltaTime;
 
         if (timeLeft <= 0.0f)
-            TryToFind();
+            TryToFind();*/
     }
 
     protected override void Finding()
     {
         mAnimations.IsWalking(false);
 
-        mine = GameManager.Instance.FindClosestMine(transform.position);
+        mine = gM.FindClosestMine(transform.position);
         
         if (mine)
         {
@@ -35,6 +35,10 @@ public class Miner : Villager
 
     protected override void Moving()
     {
+        /*
+            Aca tengo que hacer el movimiento del player con el Path que consegui
+        */
+
         if (returnToBase)
         {
             
@@ -81,6 +85,29 @@ public class Miner : Villager
     public void MineDestroyed()
     {
         OnMineDestroyed();
+    }
+
+    public override void ReactOn(Element objective)
+    {
+        switch (objective.elementType)
+        {
+            case EElement.Ground:
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(objective.GetComponent<Ground>().lastPositionClicked),
+                    EPathfinderType.Star
+                );
+
+                if (path != null)
+                    OnObjectiveFound();
+                else
+                    OnObjectiveNotFound();
+            break;
+
+            case EElement.Mine:
+
+            break;
+        }
     }
 
     void OnTriggerEnter(Collider other)

@@ -31,7 +31,11 @@
         fsm = new FSM((int)States.Count, (int)Events.Count, (int)States.Idle);
 
                                   // Origin             // Event                         // Destiny
+        fsm.SetRelation( (int)States.Idle,     (int)Events.OnObjectiveFound,    (int)States.Moving  );
+        fsm.SetRelation( (int)States.Working,  (int)Events.OnObjectiveFound,    (int)States.Moving  );
         fsm.SetRelation( (int)States.Finding,  (int)Events.OnObjectiveFound,    (int)States.Moving  );
+        fsm.SetRelation( (int)States.Moving,   (int)Events.OnObjectiveNotFound, (int)States.Idle    );
+        fsm.SetRelation( (int)States.Working,  (int)Events.OnObjectiveNotFound, (int)States.Idle    );
         fsm.SetRelation( (int)States.Finding,  (int)Events.OnObjectiveNotFound, (int)States.Idle    );
         fsm.SetRelation( (int)States.Working,  (int)Events.OnBagFull,           (int)States.Moving  );
         fsm.SetRelation( (int)States.Moving,   (int)Events.OnBaseCollision,     (int)States.Finding );
