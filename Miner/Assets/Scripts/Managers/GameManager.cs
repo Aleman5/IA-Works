@@ -16,10 +16,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    [Header("Generation")]
     public NodeGenerator nodeGenerator;
     public PathGenerator pathGenerator;
+
+    [Header("Elements")]
     public Base theBase;
     public List<Mine> mines;
+
+    [Header("Pathfinding")]
+    public EPathfinderType pathfinderType;
 
     void Start()
     {

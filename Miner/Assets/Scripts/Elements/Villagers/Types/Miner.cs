@@ -90,7 +90,7 @@ public class Miner : Villager
                 path = gM.pathGenerator.GetPath(
                     gM.nodeGenerator.GetClosestNode(transform.position),
                     gM.nodeGenerator.GetClosestNode(objective.GetComponent<Ground>().lastPositionClicked),
-                    EPathfinderType.BreadthFirst
+                    GameManager.Instance.pathfinderType
                 );
 
                 for (int i = 0; i < path.Count; i++)

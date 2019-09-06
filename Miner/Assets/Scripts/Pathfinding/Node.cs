@@ -13,6 +13,9 @@ public class Node : MonoBehaviour
 
     void Awake()
     {
+        nodeState = ENodeState.Ok;
+        nodeValue = new NodeValue(false);
+
         ady = new NodeAdy[(int)EAdyDirection.Count];
 
         for (int i = 0; i < ady.Length; i++)

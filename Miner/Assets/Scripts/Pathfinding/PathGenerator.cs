@@ -25,7 +25,7 @@ public class PathGenerator : MonoBehaviour
         
         if (Physics.Raycast(start.position + dir * 0.5f, diff.normalized, out hit, diff.magnitude - 1.0f))
         {
-            OpenNode(start, null);
+            OpenNode(start);
 
             bool pathFound = false;
 
@@ -66,6 +66,12 @@ public class PathGenerator : MonoBehaviour
         node.nodeState = ENodeState.Close;
         openNodes.Remove(node);
         closeNodes.Add(node);
+    }
+
+    void OpenNode(Node node)
+    {
+        node.nodeState = ENodeState.Open;
+        openNodes.Add(node);
     }
 
     void OpenNode(Node node, Node opener)
