@@ -39,7 +39,7 @@ public class Miner : Villager
         {
             mMovement.percReduced = mineralsHandling / maxMineralsHandle;
             mAnimations.SetSpeed(mMovement.percReduced);
-            if (mMovement.Move(path[actualPathIndex].transform.position))
+            if (mMovement.Move(path[actualPathIndex].position))
             {
                 actualPathIndex++;
                 if (actualPathIndex == path.Count)
@@ -90,8 +90,13 @@ public class Miner : Villager
                 path = gM.pathGenerator.GetPath(
                     gM.nodeGenerator.GetClosestNode(transform.position),
                     gM.nodeGenerator.GetClosestNode(objective.GetComponent<Ground>().lastPositionClicked),
-                    EPathfinderType.Star
+                    EPathfinderType.BreadthFirst
                 );
+
+                for (int i = 0; i < path.Count; i++)
+                {
+                    Debug.Log("Node " + i + ": " + path[i].position);
+                }
 
                 if (path != null)
                 {

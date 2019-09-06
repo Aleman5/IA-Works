@@ -4,11 +4,12 @@ public class Node : MonoBehaviour
 {
     public ENodeState nodeState;
     public NodeValue nodeValue;
+    public Vector3 position;
+    public Node predecesor = null; 
     public bool taken = false;
-
+    public bool isObstacle = false;
+    
     NodeAdy[] ady;
-    Node predecesor = null; 
-    bool isObstacle = false;
 
     void Awake()
     {
@@ -33,20 +34,5 @@ public class Node : MonoBehaviour
     public NodeAdy[] GetNodeAdyacents()
     {
         return ady;
-    }
-
-    public bool IsObstacle
-    {
-        get { return isObstacle; }
-        set
-        {
-            isObstacle = value;
-        }
-    }
-
-    public Node Predecesor
-    {
-        get { return predecesor;  }
-        set { predecesor = value; }
     }
 }

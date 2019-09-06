@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class NodeGenerator : MonoBehaviour
 {
-    [SerializeField] GameObject nodeObject;
     [SerializeField] Transform nodeParent;
     [SerializeField] Transform ground;
 
@@ -40,14 +38,15 @@ public class NodeGenerator : MonoBehaviour
                 {
                     if (hit.collider.tag != "Obstacle")
                     {
-                        Node node = Instantiate(nodeObject, actualPos, Quaternion.identity, nodeParent).GetComponent<Node>();
-                        nodes[i][j] = node;
+                        Node node = gameObject.AddComponent<Node>();
+                        node.position = actualPos;
 
                         if (hit.collider.tag == "Mine" || hit.collider.tag == "Base")
                         {
                             node.taken = true;
-                            node.IsObstacle = true;
+                            node.isObstacle = true;
                         }
+                        nodes[i][j] = node;
                     }
                 }
                 actualPos.x += 1.0f;
@@ -80,11 +79,9 @@ public class NodeGenerator : MonoBehaviour
 
     public Node GetClosestNode(Vector3 pos)
     {
-        int x = (int)(pos.x + (planeWidth  - 1) * 0.5f);
-        int y = (int)(pos.z + (planeHeight - 1) * 0.5f);
+        int x = (int)Mathf.Round(pos.x + (planeWidth  - 1) * 0.5f);
+        int y = (int)Mathf.Round(pos.z + (planeHeight - 1) * 0.5f);
 
-        Debug.Log("X: " + x + " Y: " + y);
-
-        return nodes[x][y];
+        return nodes[y][x];
     }
 }

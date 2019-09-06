@@ -19,11 +19,11 @@ public class PathGenerator : MonoBehaviour
 
         finishNode = finish;
 
-        Vector3 diff = finish.transform.position - start.transform.position;
+        Vector3 diff = finish.position - start.position;
         Vector3 dir = diff.normalized;
         RaycastHit hit;
-
-        if (Physics.Raycast(start.transform.position + dir * 0.5f, diff.normalized, out hit, diff.magnitude - 1.0f))
+        
+        if (Physics.Raycast(start.position + dir * 0.5f, diff.normalized, out hit, diff.magnitude - 1.0f))
         {
             OpenNode(start, null);
 
@@ -71,7 +71,7 @@ public class PathGenerator : MonoBehaviour
     void OpenNode(Node node, Node opener)
     {
         node.nodeState = ENodeState.Open;
-        node.Predecesor = opener;
+        node.predecesor = opener;
         node.nodeValue.pathValue += opener.nodeValue.pathValue;
         openNodes.Add(node);
     }
@@ -81,7 +81,7 @@ public class PathGenerator : MonoBehaviour
         NodeAdy[] adyNodes = node.GetNodeAdyacents();
 
         for (int i = 0; i < (int)EAdyDirection.Count; i++)
-            if (adyNodes[i].node && !adyNodes[i].node.IsObstacle && adyNodes[i].node.nodeState == ENodeState.Ok)
+            if (adyNodes[i].node && !adyNodes[i].node.isObstacle && adyNodes[i].node.nodeState == ENodeState.Ok)
                 OpenNode(adyNodes[i].node, node);
     }
 
@@ -140,9 +140,9 @@ public class PathGenerator : MonoBehaviour
         Node actualNode = finish;
         path.Add(actualNode);
 
-        while(actualNode.Predecesor)
+        while(actualNode.predecesor)
         {
-            actualNode = actualNode.Predecesor;
+            actualNode = actualNode.predecesor;
             path.Add(actualNode);
         }
 
@@ -156,7 +156,7 @@ public class PathGenerator : MonoBehaviour
         while(openNodes.Count > 0)
         {
             openNodes[0].nodeState = ENodeState.Ok;
-            openNodes[0].Predecesor = null;
+            openNodes[0].predecesor = null;
             openNodes[0].nodeValue.ResetPathValue();
             openNodes.RemoveAt(0);
         }
@@ -164,7 +164,7 @@ public class PathGenerator : MonoBehaviour
         while(closeNodes.Count > 0)
         {
             closeNodes[0].nodeState = ENodeState.Ok;
-            closeNodes[0].Predecesor = null;
+            closeNodes[0].predecesor = null;
             closeNodes[0].nodeValue.ResetPathValue();
             closeNodes.RemoveAt(0);
         }
@@ -172,7 +172,7 @@ public class PathGenerator : MonoBehaviour
 
     int Heuristic(Node actualNode)
     {
-        return (int)Mathf.Abs(Mathf.Round((actualNode.transform.position - finishNode.transform.position).magnitude));
+        return (int)Mathf.Abs(Mathf.Round((actualNode.position - finishNode.position).magnitude));
     }
 
     void PostProcessThetaStar(ref List<Node> path)
@@ -183,9 +183,9 @@ public class PathGenerator : MonoBehaviour
         {
             RaycastHit hit;
 
-            Vector3 diff = path[actualIndex - 2].transform.position - path[actualIndex].transform.position;
+            Vector3 diff = path[actualIndex - 2].position - path[actualIndex].position;
 
-            if (!Physics.Raycast(path[actualIndex].transform.position, diff.normalized, out hit, diff.magnitude))
+            if (!Physics.Raycast(path[actualIndex].position, diff.normalized, out hit, diff.magnitude))
                 path.Remove(path[actualIndex - 1]);
 
             actualIndex--;
