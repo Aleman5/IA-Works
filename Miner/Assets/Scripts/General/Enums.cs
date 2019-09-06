@@ -5,6 +5,7 @@
     Base,
     Mine,
     Ground,
+    Obstacle,
     Count
 }
 

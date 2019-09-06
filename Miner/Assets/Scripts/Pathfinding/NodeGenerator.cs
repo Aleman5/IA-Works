@@ -36,12 +36,13 @@ public class NodeGenerator : MonoBehaviour
 
                 if (Physics.Raycast(actualPos, Vector3.down, out hit, actualPos.y))
                 {
-                    if (hit.collider.tag != "Obstacle")
+                    Element element = hit.transform.GetComponent<Element>();
+                    if (element.elementType != EElement.Obstacle)
                     {
                         Node node = gameObject.AddComponent<Node>();
                         node.position = actualPos;
 
-                        if (hit.collider.tag == "Mine" || hit.collider.tag == "Base")
+                        if (element.elementType == EElement.Mine || element.elementType == EElement.Base)
                         {
                             node.taken = true;
                             node.isObstacle = true;
@@ -82,6 +83,12 @@ public class NodeGenerator : MonoBehaviour
         int x = (int)Mathf.Round(pos.x + (planeWidth  - 1) * 0.5f);
         int y = (int)Mathf.Round(pos.z + (planeHeight - 1) * 0.5f);
 
+        Node closestNode = nodes[y][x];
+
+        if (!closestNode)
+        {
+
+        }
         return nodes[y][x];
     }
 }
