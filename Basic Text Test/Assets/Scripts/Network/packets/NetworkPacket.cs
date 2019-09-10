@@ -11,9 +11,18 @@ public enum PacketType
 }
 
 
-public class NetworkPacket
+public abstract class NetworkPacket<P>
 {
-    public PacketType type;
+    public P payload;
+
+    public NetworkPacket(PacketType packetType)
+    {
+
+    }
+}
+
+
+    /*public PacketType type;
     public int clientId;
     public IPEndPoint ipEndPoint;
     public float timeStamp;
@@ -26,5 +35,4 @@ public class NetworkPacket
         this.clientId = clientId;
         this.ipEndPoint = ipEndPoint;
         this.payload = data;
-    }
-}
+    }*/

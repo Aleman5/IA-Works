@@ -2,7 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Packet : MonoBehaviour
+public abstract class Packet : MonoBehaviour
 {
+    public virtual void Serialize()
+    {
 
+    }
+
+    public virtual void Deserialize()
+    {
+
+    }
 }
