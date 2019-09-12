@@ -69,6 +69,14 @@ public class SelectorManager : MonoBehaviour
 
             if (element)
             {
+                Obstacle obstacle = element.GetComponent<Obstacle>();
+                if (obstacle)
+                {
+                    UIManager.Instance.OnGoalNotOAttainable();
+                    return null;
+                }
+
+
                 Ground ground = element.GetComponent<Ground>();
                 if (ground)
                     ground.lastPositionClicked = hit.point;
