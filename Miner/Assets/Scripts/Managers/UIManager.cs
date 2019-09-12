@@ -20,29 +20,39 @@ public class UIManager : MonoBehaviour
     }
 
     [Header("Error Messages")]
-    public TextMeshProUGUI obstacleMessage;
+    public TextMeshProUGUI text;
 
     private float time = 0.0f;
 
     private void Update()
     {
-        if (obstacleMessage)
+        if (text)
         {
-            obstacleMessage.alpha = Mathf.Lerp(1.0f, 0.0f, time);
+            text.alpha = Mathf.Lerp(1.0f, 0.0f, time);
 
             time += Time.deltaTime;
 
-            if (obstacleMessage.alpha <= 0.0f)
+            if (text.alpha <= 0.0f)
             {
-                obstacleMessage.alpha = 1.0f;
-                obstacleMessage.enabled = false;
+                text.alpha = 1.0f;
+                text.enabled = false;
             }
         }
     }
 
     public void OnGoalNotOAttainable()
     {
-        obstacleMessage.enabled = true;
+        text.enabled = true;
+        text.text = "You can't reach this place";
+        text.color = Color.red;
+        time = 0.0f;
+    }
+
+    public void OnExcessedWorkersCapacity(EElement elementType)
+    {
+        text.enabled = true;
+        text.text = elementType + " is full of workers";
+        text.color = new Color(255.0f, 165.0f, 0.0f);
         time = 0.0f;
     }
 }

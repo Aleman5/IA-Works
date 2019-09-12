@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Natural : Element
 {
     [Header("Natural")]
+    public ushort maxWorkers;
     public float materialsHandle;
 
     protected float materialsLeft;

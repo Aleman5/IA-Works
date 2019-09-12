@@ -108,7 +108,24 @@ public class Miner : Villager
             break;
 
             case EElement.Mine:
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(objective.GetComponent<Mine>().GetAvailableNode().position),
+                    GameManager.Instance.pathfinderType
+                );
 
+                for (int i = 0; i < path.Count; i++)
+                {
+                    Debug.Log("Node " + i + ": " + path[i].position);
+                }
+
+                if (path != null)
+                {
+                    this.objective = objective;
+                    OnObjectiveFound();
+                }
+                else
+                    OnObjectiveNotFound();
             break;
         }
     }
