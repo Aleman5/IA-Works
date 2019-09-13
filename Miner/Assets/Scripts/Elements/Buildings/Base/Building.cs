@@ -4,5 +4,13 @@ using UnityEngine;
 
 public abstract class Building : Element
 {
-    
+    virtual protected void Awake()
+    {
+
+    }
+
+    virtual protected void Start()
+    {
+
+    }
 }

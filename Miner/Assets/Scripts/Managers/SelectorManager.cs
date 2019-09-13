@@ -69,13 +69,11 @@ public class SelectorManager : MonoBehaviour
 
             if (element)
             {
-                Obstacle obstacle = element.GetComponent<Obstacle>();
-                if (obstacle)
+                if (element.GetComponent<Obstacle>())
                 {
                     UIManager.Instance.OnGoalNotOAttainable();
                     return null;
                 }
-
 
                 Ground ground = element.GetComponent<Ground>();
                 if (ground)

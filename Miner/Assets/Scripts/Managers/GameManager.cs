@@ -27,14 +27,6 @@ public class GameManager : MonoBehaviour
     [Header("Pathfinding")]
     public EPathfinderType pathfinderType;
 
-    void Start()
-    {
-        Mine[] aMines = FindObjectsOfType<Mine>();
-
-        foreach (Mine mine in aMines)
-            mines.Add(mine);
-    }
-
     public Mine FindClosestMine(Vector3 pos)
     {
         if (mines.Count == 0) return null;

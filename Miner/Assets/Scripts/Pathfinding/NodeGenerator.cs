@@ -34,19 +34,19 @@ public class NodeGenerator : MonoBehaviour
             {
                 RaycastHit hit;
 
+                Node node = gameObject.AddComponent<Node>();
+                node.position = new Vector3(actualPos.x, 0.5f, actualPos.z);
+                nodes[j][i] = node;
+
                 if (Physics.Raycast(actualPos, Vector3.down, out hit, actualPos.y))
                 {
                     Element element = hit.transform.GetComponent<Element>();
-
-                    Node node = gameObject.AddComponent<Node>();
-                    node.position = new Vector3(actualPos.x, 0.5f, actualPos.z);
                     
                     if (element.elementType == EElement.Mine || element.elementType == EElement.Base || element.elementType == EElement.Obstacle)
                     {
                         node.taken = true;
                         node.isObstacle = true;
                     }
-                    nodes[j][i] = node;
                 }
                 actualPos.x += 1.0f;
             }
@@ -81,14 +81,6 @@ public class NodeGenerator : MonoBehaviour
         int x = (int)Mathf.Round(pos.x + (planeWidth  - 1) * 0.5f);
         int y = (int)Mathf.Round(pos.z + (planeHeight - 1) * 0.5f);
 
-        Node closestNode = nodes[x][y];
-
-        Debug.Log("x: " + x + " y: " + y + " pos.x: " + pos.x + " pos.z: " + pos.z);
-        if (!closestNode)
-        {
-            Debug.Log("nodes.Count: " + nodes.Count + " nodes[y].Count: " + nodes[y].Count);
-            Debug.Log("Este nodo no existe perreke");
-        }
         return nodes[x][y];
     }
 }

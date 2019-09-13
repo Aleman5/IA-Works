@@ -17,20 +17,29 @@ public class Miner : Villager
 
     protected override void Finding()
     {
-        mAnimations.IsWalking(false);
-
-        mine = gM.FindClosestMine(transform.position);
-        
-        if (mine)
+        if (!mine)
         {
+            mine = gM.FindClosestMine(transform.position);
+            if (!mine)
+            {
+                OnObjectiveNotFound();
+                return;
+            }
+        }
+
+        path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(mine.GetAvailableNode().position),
+                    GameManager.Instance.pathfinderType
+                );
+
+        if (path != null)
+        {
+            objective = mine;
             OnObjectiveFound();
-            mAnimations.IsWalking(true);
         }
         else
-        {
-            timeLeft = timeToTryFinding;
             OnObjectiveNotFound();
-        }
     }
 
     protected override void Moving()
@@ -63,8 +72,19 @@ public class Miner : Villager
 
             if (mineralsHandling == maxMineralsHandle)
             {
-                mine.RemoveMiner(this);
-                OnBagFull();
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(gM.theBase.GetAvailableNode().position),
+                    GameManager.Instance.pathfinderType
+                );
+
+                if (path != null)
+                {
+                    objective = gM.theBase;
+                    OnObjectiveFound();
+                }
+                else
+                    OnObjectiveNotFound();
             }
             else
                 timeLeft = timeToObtainEachMat / miningSpeed;
@@ -127,6 +147,28 @@ public class Miner : Villager
                 else
                     OnObjectiveNotFound();
             break;
+
+            case EElement.Base:
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(gM.theBase.transform.position),
+                    GameManager.Instance.pathfinderType
+                );
+
+                for (int i = 0; i < path.Count; i++)
+                {
+                    Debug.Log("Node " + i + ": " + path[i].position);
+                }
+
+                if (path != null)
+                {
+                    this.objective = objective;
+                    OnObjectiveFound();
+                }
+                else
+                    OnObjectiveNotFound();
+
+                break;
         }
     }
 
@@ -148,18 +190,4 @@ public class Miner : Villager
 
         objective = null;
     }
-
-    /*void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Base" && returnToBase)
-        {
-            theBase.DeliverMinerals(ref mineralsHandling);
-            OnBaseCollision();
-        }
-        else if (other.tag  == "Mine" && !returnToBase)
-        {
-            mine.AddMiner(this);
-            OnMineCollision();
-        }
-    }*/
 }

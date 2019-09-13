@@ -1,17 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Base : Building
 {
     [Header("Base Variables")]
     public int mineralsLimit = 0;
 
-    void Awake()
+    Villager[] villagers;
+    Node node = null;
+    int index = 0;
+
+    Dictionary<Villager, int> villagerDic = new Dictionary<Villager, int>();
+
+    override protected void Awake()
     {
-        
+        base.Awake();
+
+        villagers = new Villager[(int)EAdyDirection.Count];
+        for (int i = 0; i < villagers.Length; i++)
+            villagers[i] = null;
     }
 
-    void Start()
+    override protected void Start()
     {
+        base.Start();
+
         MaterialsManager.Instance.IncreaseMineralsCapacity(mineralsLimit);
     }
 
@@ -29,5 +42,22 @@ public class Base : Building
             amount -= deliver;
             mM.actualMinerals += deliver;
         }
+    }
+
+    public Node GetAvailableNode()
+    {
+        if (!node)
+            node = GameManager.Instance.nodeGenerator.GetClosestNode(transform.position);
+
+        for (int i = 0; i < (int)EAdyDirection.Count; i++)
+            if (!villagers[i])
+            {
+                index = i;
+                return node.GetNodeAdyacents()[i].node;
+            }
+
+        UIManager.Instance.OnExcessedWorkersCapacity(elementType);
+
+        return null;
     }
 }

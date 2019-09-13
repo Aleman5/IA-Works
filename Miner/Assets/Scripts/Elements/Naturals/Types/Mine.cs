@@ -36,7 +36,7 @@ public class Mine : Natural
     {
         materialsLeft--;
 
-        if (materialsLeft >= 0)
+        if (materialsLeft <= 0)
         {
             foreach (Miner miner in miners)
                 miner.MineDestroyed();
@@ -48,7 +48,7 @@ public class Mine : Natural
     public Node GetAvailableNode()
     {
         if (!node)
-            GameManager.Instance.nodeGenerator.GetClosestNode(transform.position);
+            node = GameManager.Instance.nodeGenerator.GetClosestNode(transform.position);
 
         for (int i = 0; i < maxWorkers; i++)
             if (!miners[i]){

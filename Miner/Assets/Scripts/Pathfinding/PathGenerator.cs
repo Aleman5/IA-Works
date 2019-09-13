@@ -18,7 +18,7 @@ public class PathGenerator : MonoBehaviour
         List<Node> path = new List<Node>();
 
         finishNode = finish;
-
+        
         Vector3 diff = finish.position - start.position;
         Vector3 dir = diff.normalized;
         RaycastHit hit;
@@ -32,28 +32,25 @@ public class PathGenerator : MonoBehaviour
             while(openNodes.Count > 0)
             {
                 Node actualNode = GetOpenNode(pfT);
+                CloseNode(actualNode);
+                Node node = OpenAdyNodes(actualNode);
 
-                if (actualNode == finish)
+                if (node)
                 {
-                    MakePath(ref path, actualNode);
+                    MakePath(ref path, node);
                     pathFound = true;
                     break;
                 }
-
-                CloseNode(actualNode);
-                OpenAdyNodes(actualNode);
             }
 
             CleanNodes();
 
-            if (!pathFound)
-            {
-                return null;
-            }
-            else
+            if (pathFound)
             {
                 if (thetaStarMode) PostProcessThetaStar(ref path);
             }
+            else
+                return null;
         }
         else
             MakePath(ref path, finish);
@@ -82,13 +79,23 @@ public class PathGenerator : MonoBehaviour
         openNodes.Add(node);
     }
 
-    void OpenAdyNodes(Node node)
+    Node OpenAdyNodes(Node node)
     {
         NodeAdy[] adyNodes = node.GetNodeAdyacents();
 
         for (int i = 0; i < (int)EAdyDirection.Count; i++)
-            if (adyNodes[i].node && !adyNodes[i].node.isObstacle && adyNodes[i].node.nodeState == ENodeState.Ok)
-                OpenNode(adyNodes[i].node, node);
+            if (adyNodes[i].node)
+            {
+                if (adyNodes[i].node == finishNode)
+                {
+                    OpenNode(adyNodes[i].node, node);
+                    return adyNodes[i].node;
+                }
+                else if (!adyNodes[i].node.isObstacle && adyNodes[i].node.nodeState == ENodeState.Ok)
+                    OpenNode(adyNodes[i].node, node);
+            }
+
+        return null;
     }
 
     Node GetOpenNode(EPathfinderType pfT)
