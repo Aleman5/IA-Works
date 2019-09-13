@@ -7,8 +7,7 @@ public abstract class Natural : Element
     [Header("Natural")]
     public ushort maxWorkers;
     public float materialsHandle;
-
-    protected float materialsLeft;
+    public float materialsLeft = 0;
 
     virtual protected void Awake()
     {

@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour
     public void OnGoalNotOAttainable()
     {
         text.enabled = true;
-        text.text = "You can't reach this place";
+        text.text = "You can't reach this location";
         text.color = Color.red;
         time = 0.0f;
     }
@@ -52,7 +52,15 @@ public class UIManager : MonoBehaviour
     {
         text.enabled = true;
         text.text = elementType + " is full of workers";
-        text.color = new Color(255.0f, 165.0f, 0.0f);
+        text.color = new Color(255.0f, 0.0f, 50.0f);
+        time = 0.0f;
+    }
+
+    public void OnObjectiveNotFound(EElement entity, EElement objective)
+    {
+        text.enabled = true;
+        text.text = entity + " couldn´t found " + objective;
+        text.color = new Color(255.0f, 50.0f, 50.0f);
         time = 0.0f;
     }
 }

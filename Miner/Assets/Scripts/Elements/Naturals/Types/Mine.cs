@@ -13,8 +13,6 @@ public class Mine : Natural
     {
         base.Awake();
 
-        materialsLeft = 100;
-
         miners = new Miner[maxWorkers];
         for (int i = 0; i < miners.Length; i++)
             miners[i] = null;
@@ -23,13 +21,17 @@ public class Mine : Natural
     public void AddMiner(Miner thisM)
     {
         miners[index] = thisM;
-        minersDic.Add(thisM, index);
+
+        if (minersDic.ContainsKey(thisM))
+            minersDic[thisM] = index;
+        else
+            minersDic.Add(thisM, index);
     }
 
     public void RemoveMiner(Miner thisM)
     {
         miners[minersDic[thisM]] = null;
-        minersDic.Remove(thisM);
+        minersDic[thisM] = -1;
     }
 
     public void RemoveMaterial()
@@ -39,7 +41,9 @@ public class Mine : Natural
         if (materialsLeft <= 0)
         {
             foreach (Miner miner in miners)
-                miner.MineDestroyed();
+                if (miner)
+                    miner.MineDestroyed();
+            
             GameManager.Instance.RemoveMine(this);
             Destroy(gameObject);
         }

@@ -27,9 +27,16 @@ public class Miner : Villager
             }
         }
 
+        Node mineObj = mine.GetAvailableNode();
+        if (!mineObj)
+        {
+            OnObjectiveNotFound();
+            return;
+        }
+
         path = gM.pathGenerator.GetPath(
                     gM.nodeGenerator.GetClosestNode(transform.position),
-                    gM.nodeGenerator.GetClosestNode(mine.GetAvailableNode().position),
+                    gM.nodeGenerator.GetClosestNode(mineObj.position),
                     GameManager.Instance.pathfinderType
                 );
 
@@ -72,15 +79,23 @@ public class Miner : Villager
 
             if (mineralsHandling == maxMineralsHandle)
             {
+                Node baseObj = gM.theBase.GetAvailableNode();
+                if (!baseObj)
+                {
+                    OnObjectiveNotFound();
+                    return;
+                }
+
                 path = gM.pathGenerator.GetPath(
                     gM.nodeGenerator.GetClosestNode(transform.position),
-                    gM.nodeGenerator.GetClosestNode(gM.theBase.GetAvailableNode().position),
+                    gM.nodeGenerator.GetClosestNode(baseObj.position),
                     GameManager.Instance.pathfinderType
                 );
 
                 if (path != null)
                 {
                     objective = gM.theBase;
+                    mine.RemoveMiner(this);
                     OnObjectiveFound();
                 }
                 else
@@ -93,7 +108,64 @@ public class Miner : Villager
 
     public void MineDestroyed()
     {
-        OnMineDestroyed();
+        switch (GetActualState())
+        {
+            case (int)States.Moving:
+                mine = gM.FindClosestMine(transform.position);
+                Node mineNode = mine.GetAvailableNode();
+                if (!mineNode)
+                {
+                    UIManager.Instance.OnObjectiveNotFound(elementType, EElement.Mine);
+                    OnObjectiveNotFound();
+                    return;
+                }
+
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(mineNode.position),
+                    GameManager.Instance.pathfinderType
+                );
+
+                for (int i = 0; i < path.Count; i++)
+                {
+                    Debug.Log("Node " + i + ": " + path[i].position);
+                }
+
+                if (path != null)
+                {
+                    this.objective = mine;
+                    OnObjectiveFound();
+                }
+                else
+                {
+                    UIManager.Instance.OnGoalNotOAttainable();
+                    OnObjectiveNotFound();
+                }
+            break;
+
+            case (int)States.Working:
+                Node baseObj = gM.theBase.GetAvailableNode();
+                if (!baseObj)
+                {
+                    OnObjectiveNotFound();
+                    return;
+                }
+
+                path = gM.pathGenerator.GetPath(
+                    gM.nodeGenerator.GetClosestNode(transform.position),
+                    gM.nodeGenerator.GetClosestNode(baseObj.position),
+                    GameManager.Instance.pathfinderType
+                );
+
+                if (path != null)
+                {
+                    objective = gM.theBase;
+                    OnObjectiveFound();
+                }
+                else
+                    OnObjectiveNotFound();
+            break;
+        }
     }
 
     public override void ReactOn(Element objective)
@@ -149,6 +221,8 @@ public class Miner : Villager
             break;
 
             case EElement.Base:
+
+
                 path = gM.pathGenerator.GetPath(
                     gM.nodeGenerator.GetClosestNode(transform.position),
                     gM.nodeGenerator.GetClosestNode(gM.theBase.transform.position),

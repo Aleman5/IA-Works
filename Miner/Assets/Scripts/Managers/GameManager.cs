@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Elements")]
     public Base theBase;
-    public List<Mine> mines;
+    public List<Mine> mines = new List<Mine>();
 
     [Header("Pathfinding")]
     public EPathfinderType pathfinderType;
@@ -50,8 +50,11 @@ public class GameManager : MonoBehaviour
 
     public void RemoveMine(Mine thisMine)
     {
-        foreach (Mine mine in mines)
-            if (mine == thisMine)
-                mines.Remove(mine);
+        for (int i = 0; i < mines.Count; i++)
+            if (mines[i] == thisMine)
+            {
+                mines.Remove(mines[i]);
+                break;
+            }
     }
 }
