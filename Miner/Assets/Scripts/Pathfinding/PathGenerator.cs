@@ -50,7 +50,10 @@ public class PathGenerator : MonoBehaviour
                 if (thetaStarMode) PostProcessThetaStar(ref path);
             }
             else
+            {
+                UIManager.Instance.OnGoalNotOAttainable();
                 return null;
+            }
         }
         else
             MakePath(ref path, finish);
@@ -134,10 +137,11 @@ public class PathGenerator : MonoBehaviour
 
                 for (int i = 0; i < openNodes.Count; i++)
                 {
-                    if (openNodes[i].nodeValue.pathValue < starLowestValue)
+                    int cost = openNodes[i].nodeValue.pathValue + Heuristic(openNodes[i]);
+                    if (cost < starLowestValue)
                     {
                         starIndex = i;
-                        lowestValue = openNodes[i].nodeValue.pathValue + Heuristic(openNodes[i]);
+                        starLowestValue = cost;
                     }
                 }
 

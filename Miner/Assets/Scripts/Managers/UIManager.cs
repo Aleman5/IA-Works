@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    [Header("Error Messages")]
+    [Header("Message")]
     public TextMeshProUGUI text;
 
     private float time = 0.0f;

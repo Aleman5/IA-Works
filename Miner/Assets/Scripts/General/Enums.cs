@@ -2,7 +2,7 @@
 {
     Miner,
     Soldier,
-    Base,
+    TownCenter,
     Mine,
     Ground,
     Obstacle,
@@ -49,5 +49,14 @@ public enum EPathfinderType
     DepthFirst,
     Dijkstra,
     Star,
+    Count
+}
+
+public enum EBState
+{
+    None,
+    Running,
+    Ok,
+    Fail,
     Count
 }

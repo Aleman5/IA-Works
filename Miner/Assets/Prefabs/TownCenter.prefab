@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9136676431821326392}
   - component: {fileID: 6055452771830629008}
   m_Layer: 0
-  m_Name: Farmhouse
+  m_Name: TownCenter
   m_TagString: Base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

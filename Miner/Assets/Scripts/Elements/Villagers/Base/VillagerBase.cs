@@ -7,7 +7,7 @@ public abstract class VillagerBase : Element
     public int maxMineralsHandle = 0;
     public int mineralsHandling = 0;
 
-    protected Base theBase = null;
+    protected TownCenter myTownCenter = null;
     protected bool returnToBase = false;
     protected float timeToObtainEachMat = 2.0f;
     protected float timeToTryFinding = 3.0f;
@@ -25,7 +25,7 @@ public abstract class VillagerBase : Element
     {
         gM = GameManager.Instance;
 
-        theBase = gM.theBase;
+        myTownCenter = gM.myTownCenter;
 
         mMovement   = GetComponent<MinerMovement>();
         mActions    = GetComponent<MinerAction>();

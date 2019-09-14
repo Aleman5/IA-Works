@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : Building
+public class TownCenter : Building
 {
     [Header("Base Variables")]
     public int mineralsLimit = 0;

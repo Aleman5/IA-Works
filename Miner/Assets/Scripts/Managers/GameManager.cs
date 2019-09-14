@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public PathGenerator pathGenerator;
 
     [Header("Elements")]
-    public Base theBase;
+    public TownCenter myTownCenter;
     public List<Mine> mines = new List<Mine>();
 
     [Header("Pathfinding")]

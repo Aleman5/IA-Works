@@ -42,7 +42,7 @@ public class NodeGenerator : MonoBehaviour
                 {
                     Element element = hit.transform.GetComponent<Element>();
                     
-                    if (element.elementType == EElement.Mine || element.elementType == EElement.Base || element.elementType == EElement.Obstacle)
+                    if (element.elementType == EElement.Mine || element.elementType == EElement.TownCenter || element.elementType == EElement.Obstacle)
                     {
                         node.taken = true;
                         node.isObstacle = true;

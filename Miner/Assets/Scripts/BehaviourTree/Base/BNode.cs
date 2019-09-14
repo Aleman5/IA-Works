@@ -2,7 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BNode : MonoBehaviour
+public abstract class BNode : MonoBehaviour
 {
-    
+    public EBState bState;
+    public string bName;
+
+    /*public EBState CheckBNodeState()
+    {
+        return (ProcessBNode());
+    }*/
+
+    //abstract protected EBState ProcessBNode();
 }
