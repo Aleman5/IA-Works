@@ -1,4 +1,5 @@
 using System.Net;
+using System.IO;
 
 public enum PacketType
 {
@@ -8,17 +9,23 @@ public enum PacketType
     Ping,
     Pong,
     Message,
+    Position,
 }
 
 
-public abstract class NetworkPacket<P>
+public abstract class NetworkPacket<P> : ISerializePacket
 {
     public P payload;
 
+    public ushort packetType { get; set; }
+
     public NetworkPacket(PacketType packetType)
     {
-
+        this.packetType = (ushort)packetType;
     }
+
+    abstract public void Serialize(Stream stream);
+    abstract public void Deserialize(Stream stream);
 }
 
 

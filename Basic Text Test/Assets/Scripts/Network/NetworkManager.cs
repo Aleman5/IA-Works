@@ -7,10 +7,10 @@ using System;
 public struct Client
 {
     public float timeStamp;
-    public int id;
+    public uint id;
     public IPEndPoint ipEndPoint;
 
-    public Client(IPEndPoint ipEndPoint, int id, float timeStamp)
+    public Client(IPEndPoint ipEndPoint, uint id, float timeStamp)
     {
         this.timeStamp = timeStamp;
         this.id = id;
@@ -41,10 +41,10 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveDa
 
     private UdpConnection connection;
 
-    private readonly Dictionary<int, Client> clients = new Dictionary<int, Client>();
-    private readonly Dictionary<IPEndPoint, int> ipToId = new Dictionary<IPEndPoint, int>();
+    private readonly Dictionary<uint, Client> clients = new Dictionary<uint, Client>();
+    private readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
 
-    int clientId = 0; // This id should be generated during first handshake
+    public uint clientId = 0; // This id should be generated during first handshake
     
     public void StartServer(int port)
     {
@@ -71,7 +71,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveDa
         {
             Debug.Log("Adding client: " + ip.Address);
 
-            int id = clientId;
+            uint id = clientId;
             ipToId[ip] = clientId;
             
             clients.Add(clientId, new Client(ip, id, Time.realtimeSinceStartup));
@@ -118,5 +118,10 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveDa
         // We flush the data in main thread
         if (connection != null)
             connection.FlushReceiveData();
+    }
+
+    public Client GetClient(uint clientId)
+    {
+        return clients[clientId];
     }
 }

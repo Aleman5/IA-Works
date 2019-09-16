@@ -1,7 +1,9 @@
-﻿public interface ISerializePacket
+﻿using System.IO;
+
+public interface ISerializePacket
 {
     ushort packetType { get; set; }
 
-    void Serialize();
-    void Deserialize();
+    void Serialize(Stream stream);
+    void Deserialize(Stream stream);
 }
