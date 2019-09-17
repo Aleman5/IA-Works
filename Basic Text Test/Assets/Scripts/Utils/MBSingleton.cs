@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviourSingleton<T>
+public class MBSingleton<T> : MonoBehaviour where T : MBSingleton<T>
 {
-    private static MonoBehaviourSingleton<T> instance = null;
+    private static MBSingleton<T> instance = null;
 
     public static T Instance
     {
         get 
         {
             if (instance == null)
-                instance = FindObjectOfType<MonoBehaviourSingleton<T>>();
+                instance = FindObjectOfType<MBSingleton<T>>();
 
             return (T)instance;
         }

@@ -18,7 +18,7 @@ public struct Client
     }
 }
 
-public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveData
+public class NetworkManager : MBSingleton<NetworkManager>, IReceiveData
 {
     public IPAddress ipAddress
     {
@@ -44,7 +44,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveDa
     private readonly Dictionary<uint, Client> clients = new Dictionary<uint, Client>();
     private readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
 
-    public uint clientId = 0; // This id should be generated during first handshake
+    public uint clientId { get; set; } // This id should be generated during first handshake
     
     public void StartServer(int port)
     {
@@ -118,10 +118,5 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, IReceiveDa
         // We flush the data in main thread
         if (connection != null)
             connection.FlushReceiveData();
-    }
-
-    public Client GetClient(uint clientId)
-    {
-        return clients[clientId];
     }
 }

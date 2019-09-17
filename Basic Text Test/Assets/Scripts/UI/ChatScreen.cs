@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Net;
 
-public class ChatScreen : MonoBehaviourSingleton<ChatScreen>
+public class ChatScreen : MBSingleton<ChatScreen>
 {
     public Text messages;
     public InputField inputMessage;

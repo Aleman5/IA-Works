@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Net;
 
-public class NetworkScreen : MonoBehaviourSingleton<NetworkScreen>
+public class NetworkScreen : MBSingleton<NetworkScreen>
 {
     public Button connectBtn;
     public Button startServerBtn;

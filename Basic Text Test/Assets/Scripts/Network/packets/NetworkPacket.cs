@@ -24,22 +24,16 @@ public abstract class NetworkPacket<P> : ISerializePacket
         this.packetType = (ushort)packetType;
     }
 
-    abstract public void Serialize(Stream stream);
-    abstract public void Deserialize(Stream stream);
-}
-
-
-    /*public PacketType type;
-    public int clientId;
-    public IPEndPoint ipEndPoint;
-    public float timeStamp;
-    public byte[] payload;
-
-    public NetworkPacket(PacketType type, byte[] data, float timeStamp, int clientId = -1, IPEndPoint ipEndPoint = null)
+    public void Serialize(Stream stream)
     {
-        this.type = type;
-        this.timeStamp = timeStamp;
-        this.clientId = clientId;
-        this.ipEndPoint = ipEndPoint;
-        this.payload = data;
-    }*/
+        OnSerialize(stream);
+    }
+
+    public void Deserialize(Stream stream)
+    {
+        OnDeserialize(stream);
+    }
+
+    abstract public void OnSerialize(Stream stream);
+    abstract public void OnDeserialize(Stream stream);
+}

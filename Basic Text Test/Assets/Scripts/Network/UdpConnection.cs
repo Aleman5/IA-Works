@@ -61,6 +61,8 @@ public class UdpConnection
             DataReceived dataReceived = new DataReceived();
             dataReceived.data = connection.EndReceive(ar, ref dataReceived.ipEndPoint);
 
+            connection.BeginReceive(OnReceive, null);
+
             lock (handler)
             {
                 dataReceivedQueue.Enqueue(dataReceived);
@@ -71,8 +73,6 @@ public class UdpConnection
             // This happens when a client disconnects, as we fail to send to that port.
             UnityEngine.Debug.LogError("[UdpConnection] " + e.Message);
         }
-
-        connection.BeginReceive(OnReceive, null);
     }
 
     public void Send(byte[] data)
