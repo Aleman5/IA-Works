@@ -10,7 +10,7 @@ public abstract class GamePacket<P> : NetworkPacket<P>
 
 public class MessagePacket : GamePacket<string>
 {
-    MessagePacket() : base(PacketType.Message) { }
+    public MessagePacket() : base(PacketType.Message) { }
 
     public override void OnSerialize(Stream stream)
     {
@@ -27,7 +27,7 @@ public class MessagePacket : GamePacket<string>
 
 public class PositionPacket : GamePacket<Vector3>
 {
-    PositionPacket() : base(PacketType.Position) { }
+    public PositionPacket() : base(PacketType.Position) { }
     
     public override void OnSerialize(Stream stream)
     {
