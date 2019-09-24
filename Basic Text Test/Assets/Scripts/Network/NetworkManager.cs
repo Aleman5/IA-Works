@@ -43,7 +43,7 @@ public class NetworkManager : MBSingleton<NetworkManager>, IReceiveData
     private readonly Dictionary<uint, Client> clients = new Dictionary<uint, Client>();
     private readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
 
-    public uint clientId { get; set; } // This id should be generated during first handshake
+    public uint clientId { get; set; }
     
     public void StartServer(int port)
     {
