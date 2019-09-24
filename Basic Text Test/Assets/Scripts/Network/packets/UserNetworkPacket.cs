@@ -1,16 +1,30 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
-public class PacketHeader : MonoBehaviour, ISerializePacket
+public enum UserPacketType
 {
-    public uint protocolId;
+    Message,
+    Position,
+    Count
+}
+
+public class UserPacketHeader : MonoBehaviour, ISerializePacket
+{
+    public uint packetId;
+    public uint senderId;
+    public uint objectId;
+
     public ushort packetType { get; set; }
 
     public void Serialize(Stream stream)
     {
         BinaryWriter binaryWriter = new BinaryWriter(stream);
-        
-        binaryWriter.Write(protocolId);
+
+        binaryWriter.Write(packetId);
+        binaryWriter.Write(senderId);
+        binaryWriter.Write(objectId);
         binaryWriter.Write(packetType);
 
         OnSerialize(stream);
@@ -20,7 +34,9 @@ public class PacketHeader : MonoBehaviour, ISerializePacket
     {
         BinaryReader binaryReader = new BinaryReader(stream);
 
-        protocolId = binaryReader.ReadUInt32();
+        packetId = binaryReader.ReadUInt32();
+        senderId = binaryReader.ReadUInt32();
+        objectId = binaryReader.ReadUInt32();
         packetType = binaryReader.ReadUInt16();
 
         OnDeserialize(stream);

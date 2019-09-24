@@ -15,6 +15,11 @@ public class MBSingleton<T> : MonoBehaviour where T : MBSingleton<T>
         }
     }
 
+    public static bool IsAvailable()
+    {
+        return instance != null;
+    }
+
     protected virtual void Initialize()
     {
 

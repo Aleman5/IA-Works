@@ -3,13 +3,12 @@ using System.IO;
 
 public enum PacketType
 {
-    HandShake,
-    HandShake_OK, 
-    Error,
-    Ping,
-    Pong,
-    Message,
-    Position,
+    ConnectionRequest,
+    ChallengeRequest,
+    ChallengeResponse,
+    Connected,
+    User,
+    Count
 }
 
 
@@ -17,11 +16,12 @@ public abstract class NetworkPacket<P> : ISerializePacket
 {
     public P payload;
 
+    public ushort userPacketType { get; set; }
     public ushort packetType { get; set; }
 
-    public NetworkPacket(PacketType packetType)
+    public NetworkPacket(ushort packetType)
     {
-        this.packetType = (ushort)packetType;
+        this.packetType = packetType;
     }
 
     public void Serialize(Stream stream)

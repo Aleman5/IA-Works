@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using UnityEngine;
 
 public class PacketManager : Singleton<PacketManager>, IReceiveData
 {
@@ -25,7 +24,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             onPacketReceived.Remove(ownerId);
     }
 
-    public void SendPacket(ISerializePacket packet, uint objectId, bool reliable = false)
+    public void SendPacket<T>(NetworkPacket<T> packet, uint objectId, bool reliable = false)
     {
         byte[] bytes = Serialize(packet, objectId);
 
@@ -35,17 +34,25 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             NetworkManager.Instance.SendToServer(bytes);
     }
 
-    byte[] Serialize(ISerializePacket packet, uint objectId)
+    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId)
     {
         PacketHeader header = new PacketHeader();
+        UserPacketHeader userHeader = new UserPacketHeader();
         MemoryStream stream = new MemoryStream();
 
-        header.packetId = currentPacketId++;
-        header.senderId = NetworkManager.Instance.clientId;
-        header.objectId = objectId;
+        header.protocolId = 0;
         header.packetType = packet.packetType;
 
+        if (packet.packetType == (ushort)PacketType.User)
+        {
+            userHeader.packetType = packet.userPacketType;
+            userHeader.packetId   = currentPacketId++;
+            userHeader.senderId   = NetworkManager.Instance.clientId;
+            userHeader.objectId   = objectId;
+        }
+
         header.Serialize(stream);
+        userHeader.Serialize(stream);
         packet.Serialize(stream);
 
         stream.Close();
@@ -56,11 +63,13 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     public void OnReceiveData(byte[] data, IPEndPoint ipEndpoint)
     {
         PacketHeader header = new PacketHeader();
+        UserPacketHeader userHeader = new UserPacketHeader();
         MemoryStream stream = new MemoryStream(data);
 
         header.Deserialize(stream);
+        userHeader.Deserialize(stream);
 
-        InvokeCallback(header.objectId, header.packetId, header.packetType, stream);
+        InvokeCallback(userHeader.objectId, userHeader.packetId, userHeader.packetType, stream);
 
         stream.Close();
     }

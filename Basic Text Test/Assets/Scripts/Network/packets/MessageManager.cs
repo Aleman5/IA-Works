@@ -15,4 +15,13 @@ public class MessageManager : Singleton<MessageManager>
 
         PacketManager.Instance.SendPacket(packet, objectId);
     }
+
+    public void SendPosition(Vector3 position, uint objectId)
+    {
+        PositionPacket packet = new PositionPacket();
+
+        packet.payload = position;
+
+        PacketManager.Instance.SendPacket(packet, objectId);
+    }
 }

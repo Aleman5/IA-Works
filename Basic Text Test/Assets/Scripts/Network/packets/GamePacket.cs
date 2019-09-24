@@ -1,16 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 
 public abstract class GamePacket<P> : NetworkPacket<P>
 {
-    public GamePacket(PacketType packetType) : base(packetType) { }
+    public GamePacket(ushort packetType) : base(packetType) { }
 }
 
 public class MessagePacket : GamePacket<string>
 {
-    public MessagePacket() : base(PacketType.Message) { }
+    public MessagePacket() : base((ushort)PacketType.User) { }
 
     public override void OnSerialize(Stream stream)
     {
@@ -27,7 +25,7 @@ public class MessagePacket : GamePacket<string>
 
 public class PositionPacket : GamePacket<Vector3>
 {
-    public PositionPacket() : base(PacketType.Position) { }
+    public PositionPacket() : base((ushort)PacketType.User) { }
     
     public override void OnSerialize(Stream stream)
     {
