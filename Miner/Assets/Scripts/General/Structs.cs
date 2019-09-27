@@ -7,6 +7,7 @@
 public struct NodeValue
 {
     public int pathValue;
+    public int heuristicValue;
     public int value;
     public bool isDanger;
     public bool isRisky;
@@ -19,6 +20,7 @@ public struct NodeValue
             value = (int)ENodeValueMultipliers.Mud;
 
         pathValue = value;
+        heuristicValue = 0;
         isDanger = false;
         isRisky = false;
     }
@@ -26,6 +28,7 @@ public struct NodeValue
     public void ResetPathValue()
     {
         pathValue = value;
+        heuristicValue = 0;
     }
 
     public bool IsDanger 

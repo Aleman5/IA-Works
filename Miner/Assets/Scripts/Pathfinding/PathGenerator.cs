@@ -11,9 +11,13 @@ public class PathGenerator : MonoBehaviour
 
     Node finishNode = null;
 
+    EPathfinderType pfT;
+
     public List<Node> GetPath(Node start, Node finish, EPathfinderType pfT)
     {
         if (start == finish) return null;
+
+        this.pfT = pfT;
 
         List<Node> path = new List<Node>();
 
@@ -31,7 +35,7 @@ public class PathGenerator : MonoBehaviour
 
             while(openNodes.Count > 0)
             {
-                Node actualNode = GetOpenNode(pfT);
+                Node actualNode = GetOpenNode();
                 CloseNode(actualNode);
                 Node node = OpenAdyNodes(actualNode);
 
@@ -78,7 +82,17 @@ public class PathGenerator : MonoBehaviour
     {
         node.nodeState = ENodeState.Open;
         node.predecesor = opener;
-        node.nodeValue.pathValue += opener.nodeValue.pathValue;
+
+        switch (pfT)
+        {
+            case EPathfinderType.Dijkstra:
+                node.nodeValue.pathValue += opener.nodeValue.pathValue;
+                break;
+            case EPathfinderType.Star:
+                node.nodeValue.heuristicValue = Heuristic(node);
+                node.nodeValue.pathValue += opener.nodeValue.pathValue;
+                break;
+        }
         openNodes.Add(node);
     }
 
@@ -101,7 +115,7 @@ public class PathGenerator : MonoBehaviour
         return null;
     }
 
-    Node GetOpenNode(EPathfinderType pfT)
+    Node GetOpenNode()
     {
         Node node = null;
 
@@ -137,7 +151,8 @@ public class PathGenerator : MonoBehaviour
 
                 for (int i = 0; i < openNodes.Count; i++)
                 {
-                    int cost = openNodes[i].nodeValue.pathValue + Heuristic(openNodes[i]);
+                    NodeValue data = openNodes[i].nodeValue;
+                    int cost = data.pathValue + data.heuristicValue;
                     if (cost < starLowestValue)
                     {
                         starIndex = i;

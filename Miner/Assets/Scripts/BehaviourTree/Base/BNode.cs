@@ -7,10 +7,10 @@ public abstract class BNode : MonoBehaviour
     public EBState bState;
     public string bName;
 
-    /*public EBState CheckBNodeState()
+    public EBState Evaluate()
     {
         return (ProcessBNode());
-    }*/
+    }
 
-    //abstract protected EBState ProcessBNode();
+    virtual protected EBState ProcessBNode() { return bState; }
 }
