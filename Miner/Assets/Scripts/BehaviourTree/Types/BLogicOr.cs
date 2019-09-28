@@ -1,13 +1,13 @@
-﻿public class BLogic : BWithChild
+﻿public class BLogicOr : BLogic
 {
     override protected EBState ProcessBNode()
     {
-        bool result = true;
+        bool result = false;
 
         foreach (BNode node in nodes)
         {
             result = node.Evaluate() == EBState.Ok;
-            if (!result)
+            if (result)
                 break;
         }
 

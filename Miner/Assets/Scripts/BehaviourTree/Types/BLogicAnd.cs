@@ -1,4 +1,4 @@
-﻿public class BLogic : BWithChild
+﻿public class BLogicAnd : BLogic
 {
     override protected EBState ProcessBNode()
     {
