@@ -4,14 +4,11 @@
 
     override protected EBState ProcessBNode()
     {
-        if (bState == EBState.None)
-            lastIndex = 0;
-
         do
         {
             bState = nodes[lastIndex].Evaluate();
 
-            if (bState == EBState.Running)
+            if (bState == EBState.Running || bState == EBState.Fail)
                 break;
 
         } while (++lastIndex < nodes.Count);
@@ -21,4 +18,6 @@
 
         return bState;
     }
+
+    override public void Reset() { base.Reset(); lastIndex = 0; }
 }

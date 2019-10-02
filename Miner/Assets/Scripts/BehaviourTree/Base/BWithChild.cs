@@ -7,5 +7,11 @@ public class BWithChild : BNode
     public ushort maxChilds;
     public List<BNode> nodes;
 
-    override protected EBState ProcessBNode() { return bState; }
+    override public void Reset()
+    {
+        base.Reset();
+
+        foreach (BNode node in nodes)
+            node.Reset();
+    }
 }

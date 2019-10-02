@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class BAction : BNode
+﻿public class BAction : BNode
 {
     public delegate EBState ActionNodeDelegate();
 
