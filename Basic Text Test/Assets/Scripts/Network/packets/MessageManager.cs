@@ -2,7 +2,7 @@
 
 public class MessageManager : Singleton<MessageManager>
 {
-    protected override void Initialize()
+    override protected void Initialize()
     {
         base.Initialize();
     }

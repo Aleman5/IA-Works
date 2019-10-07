@@ -10,7 +10,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     Dictionary<uint, System.Action<uint, ushort, Stream>> onGamePacketReceived = new Dictionary<uint, System.Action<uint, ushort, Stream>>();
     uint currentPacketId = 0;
 
-    protected override void Initialize()
+    override protected void Initialize()
     {
         base.Initialize();
         NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
@@ -18,7 +18,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
     public void AddListenerById(uint ownerId, System.Action<uint, ushort, Stream> callback)
     {
-        if (onGamePacketReceived.ContainsKey(ownerId))
+        if (!onGamePacketReceived.ContainsKey(ownerId))
             onGamePacketReceived.Add(ownerId, callback);
     }
 
@@ -95,17 +95,18 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         MemoryStream stream = new MemoryStream(data);
 
         header.Deserialize(stream);
-        
+        UnityEngine.Debug.Log((PacketType)header.packetType);
         if ((PacketType)header.packetType == PacketType.User)
         {
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.Deserialize(stream);
-
+            UnityEngine.Debug.Log((UserPacketType)userHeader.packetType);
             if (onGamePacketReceived.ContainsKey(userHeader.objectId))
                 onGamePacketReceived[userHeader.objectId].Invoke(userHeader.packetId, userHeader.packetType, stream);
         }
         else
         {
+
             onInternalPacketReceived.Invoke(header.packetType, ipEndpoint, stream);
         }
 

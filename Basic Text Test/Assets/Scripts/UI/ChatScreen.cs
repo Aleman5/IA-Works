@@ -8,19 +8,21 @@ public class ChatScreen : MBSingleton<ChatScreen>
     public Text messages;
     public InputField inputMessage;
 
-    protected override void Initialize()
+    override protected void Awake()
     {
+        base.Awake();
+
         gameObject.SetActive(false);
     }
 
     void OnEnable()
     {
-        PacketManager.Instance.AddListenerById(0, OnReceivePacket);
+        PacketManager.Instance.AddListenerById(ConnectionManager.Instance.clientId, OnReceivePacket);
     }
 
     void OnDisable()
     {
-        PacketManager.Instance.RemoveListenerById(0);
+        PacketManager.Instance.RemoveListenerById(ConnectionManager.Instance.clientId);
     }
 
     void OnReceivePacket(uint packetId, ushort type, Stream stream)

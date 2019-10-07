@@ -20,11 +20,11 @@ public struct Client
 
     public Client(IPEndPoint ipEndPoint, uint id, long clientSalt, long serverSalt, float timeStamp)
     {
+        this.ipEndPoint = ipEndPoint;
         this.id = id;
         this.clientSalt = clientSalt;
         this.serverSalt = serverSalt;
         this.timeStamp = timeStamp;
-        this.ipEndPoint = ipEndPoint;
 
         state = ClientState.NotConnected;
     }
@@ -51,10 +51,10 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
     public long clientSalt { get; private set; }
     public long serverSalt { get; private set; }
 
-    override protected void Initialize()
+    override protected void Awake()
     {
-        base.Initialize();
-
+        base.Awake();
+        
         clientSalt = serverSalt = -1;
         state = State.Disconnected;
         PacketManager.Instance.onInternalPacketReceived += OnInternalPacketReceived;
@@ -65,7 +65,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         if (NetworkManager.Instance.StartServer(port))
         {
             state = State.Connected;
-            Debug.Log("Server Creation success");
+            
             return true;
         }
 
@@ -78,7 +78,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         {
             if (onConnectCallback != null)
                 onConnectCallback(false);
-            Debug.Log("Client creation failed");
+            
             return;
         }
 
@@ -86,7 +86,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
             onConnect += onConnectCallback;
 
         state = State.RequestingConnect;
-        clientSalt = (long)Random.Range(0, long.MaxValue);
+        clientSalt = (long)Random.Range(0, float.MaxValue);
 
         SendConnectionRequest();
     }
@@ -95,17 +95,17 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
     {
         if (!ipToId.ContainsKey(ip))
         {
-            Debug.Log("Adding client: " + ip.Address);
-
             uint id = 0;
             do
             {
                 id = (uint)Random.Range(1, uint.MaxValue);
             } while (clients.ContainsKey(id));
 
-            ipToId[ip] = id;
-            
-            clients.Add(clientId, new Client(ip, id, clientSalt, serverSalt, Time.realtimeSinceStartup));
+            Debug.Log("Adding client: " + ip.Address + " id: " + id);
+
+            ipToId.Add(ip, id);
+
+            clients.Add(id, new Client(ip, id, clientSalt, serverSalt, Time.realtimeSinceStartup));
 
             return id;
         }
@@ -180,7 +180,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
             long clientSalt = packet.payload.clientSalt;
             long serverSalt = -1;
             uint id = 0;
-
+            
             if (ipToId.ContainsKey(ipEndPoint))
             {
                 id = ipToId[ipEndPoint];
@@ -188,8 +188,9 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
             }
             else
             {
-                serverSalt = (long)Random.Range(0, long.MaxValue);
+                serverSalt = (long)Random.Range(0, float.MaxValue);
                 id = AddClient(clientSalt, serverSalt, ipEndPoint);
+                Debug.Log("Id: " + id);
             }
 
             SendChallengeRequest(id, clientSalt, serverSalt, ipEndPoint);

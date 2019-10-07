@@ -9,8 +9,10 @@ public class NetworkScreen : MBSingleton<NetworkScreen>
     public InputField portInputField;
     public InputField addressInputField;
 
-    protected override void Initialize()
+    override protected void Awake()
     {
+        base.Awake();
+
         connectBtn.onClick.AddListener(OnConnectBtnClick);
         startServerBtn.onClick.AddListener(OnStartServerBtnClick);
     }

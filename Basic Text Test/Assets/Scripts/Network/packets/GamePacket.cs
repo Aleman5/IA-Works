@@ -8,7 +8,7 @@ public abstract class GamePacket<P> : NetworkPacket<P>
 
 public class MessagePacket : GamePacket<string>
 {
-    public MessagePacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Position) { }
+    public MessagePacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Message) { }
 
     public override void OnSerialize(Stream stream)
     {
