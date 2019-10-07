@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -19,7 +19,7 @@ public class TcpConnection
 
     public TcpConnection(string host, int port, IReceiveData receiver = null)
     {
-        connection = new TcpClient(/* Elegir la sobrecarga correcta */);
+        connection = new TcpClient( Elegir la sobrecarga correcta);
 
         this.receiver = receiver;
 
@@ -28,7 +28,7 @@ public class TcpConnection
 
     public TcpConnection(IPAddress ip, int port, IReceiveData receiver = null)
     {
-        connection = new TcpClient(/* Elegir la sobrecarga correcta */);
+        connection = new TcpClient( Elegir la sobrecarga correcta );
         connection.Connect(ip, port);
 
         this.receiver = receiver;
@@ -57,4 +57,4 @@ public class TcpConnection
 
         //connection.BeginConnect(OnReceive, null); // Descomentar esto mañana
     }
-}
+}*/

@@ -3,12 +3,12 @@ using System.IO;
 
 public abstract class GamePacket<P> : NetworkPacket<P>
 {
-    public GamePacket(ushort packetType) : base(packetType) { }
+    public GamePacket(ushort packetType, ushort userPacketType) : base(packetType, userPacketType) { }
 }
 
 public class MessagePacket : GamePacket<string>
 {
-    public MessagePacket() : base((ushort)PacketType.User) { }
+    public MessagePacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Position) { }
 
     public override void OnSerialize(Stream stream)
     {
@@ -25,7 +25,7 @@ public class MessagePacket : GamePacket<string>
 
 public class PositionPacket : GamePacket<Vector3>
 {
-    public PositionPacket() : base((ushort)PacketType.User) { }
+    public PositionPacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Position) { }
     
     public override void OnSerialize(Stream stream)
     {

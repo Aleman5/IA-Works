@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 
 public enum UserPacketType
@@ -15,7 +13,6 @@ public class UserPacketHeader : MonoBehaviour, ISerializePacket
     public uint packetId;
     public uint senderId;
     public uint objectId;
-
     public ushort packetType { get; set; }
 
     public void Serialize(Stream stream)

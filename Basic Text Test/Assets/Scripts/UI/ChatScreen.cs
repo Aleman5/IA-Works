@@ -15,19 +15,19 @@ public class ChatScreen : MBSingleton<ChatScreen>
 
     void OnEnable()
     {
-        PacketManager.Instance.AddListener(0, OnReceivePacket);
+        PacketManager.Instance.AddListenerById(0, OnReceivePacket);
     }
 
     void OnDisable()
     {
-        PacketManager.Instance.RemoveListener(0);
+        PacketManager.Instance.RemoveListenerById(0);
     }
 
     void OnReceivePacket(uint packetId, ushort type, Stream stream)
     {
-        switch (type)
+        switch ((UserPacketType)type)
         {
-            case (ushort)UserPacketType.Message:
+            case UserPacketType.Message:
                 MessagePacket messagePacket = new MessagePacket();
                 messagePacket.Deserialize(stream);
 
@@ -37,7 +37,7 @@ public class ChatScreen : MBSingleton<ChatScreen>
                 messages.text += messagePacket.payload + System.Environment.NewLine;
                 break;
 
-            case (ushort)UserPacketType.Position:
+            case UserPacketType.Position:
                 PositionPacket positionPacket = new PositionPacket();
                 positionPacket.Deserialize(stream);
 

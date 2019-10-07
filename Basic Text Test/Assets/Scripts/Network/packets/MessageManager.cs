@@ -13,7 +13,7 @@ public class MessageManager : Singleton<MessageManager>
 
         packet.payload = message;
 
-        PacketManager.Instance.SendPacket(packet, objectId);
+        PacketManager.Instance.SendGamePacket(packet, objectId);
     }
 
     public void SendPosition(Vector3 position, uint objectId)
@@ -22,6 +22,6 @@ public class MessageManager : Singleton<MessageManager>
 
         packet.payload = position;
 
-        PacketManager.Instance.SendPacket(packet, objectId);
+        PacketManager.Instance.SendGamePacket(packet, objectId);
     }
 }

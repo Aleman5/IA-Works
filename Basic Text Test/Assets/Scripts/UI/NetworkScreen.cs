@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Net;
 
@@ -22,19 +20,25 @@ public class NetworkScreen : MBSingleton<NetworkScreen>
         IPAddress ipAddress = IPAddress.Parse(addressInputField.text);
         int port = System.Convert.ToInt32(portInputField.text);
 
-        NetworkManager.Instance.StartClient(ipAddress, port);
+        ConnectionManager.Instance.ConnectToServer(ipAddress, port, OnConnect);
         
-        SwitchToChatScreen();
+        SwitchToNextScreen();
+    }
+
+    void OnConnect(bool state)
+    {
+        Debug.Log("Connected: " + state);
+        SwitchToNextScreen();
     }
 
     void OnStartServerBtnClick()
     {
         int port = System.Convert.ToInt32(portInputField.text);
-        NetworkManager.Instance.StartServer(port);
-        SwitchToChatScreen();
+        if (ConnectionManager.Instance.StartServer(port))
+            SwitchToNextScreen();
     }
 
-    void SwitchToChatScreen()
+    void SwitchToNextScreen()
     {
         ChatScreen.Instance.gameObject.SetActive(true);
         this.gameObject.SetActive(false);

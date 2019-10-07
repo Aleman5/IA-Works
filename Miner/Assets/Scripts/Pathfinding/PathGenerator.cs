@@ -15,7 +15,7 @@ public class PathGenerator : MonoBehaviour
 
     public List<Node> GetPath(Node start, Node finish, EPathfinderType pfT)
     {
-        if (start == finish) return null;
+        if (start == finish) return path;
 
         this.pfT = pfT;
 
