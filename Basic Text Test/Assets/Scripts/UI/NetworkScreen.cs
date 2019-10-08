@@ -23,21 +23,23 @@ public class NetworkScreen : MBSingleton<NetworkScreen>
         int port = System.Convert.ToInt32(portInputField.text);
 
         ConnectionManager.Instance.ConnectToServer(ipAddress, port, OnConnect);
-        
-        SwitchToNextScreen();
     }
 
     void OnConnect(bool state)
     {
         Debug.Log("Connected: " + state);
         SwitchToNextScreen();
+        GameManager.Instance.UserConnected();
     }
 
     void OnStartServerBtnClick()
     {
         int port = System.Convert.ToInt32(portInputField.text);
-        if (ConnectionManager.Instance.StartServer(port))
+        if (ConnectionManager.Instance.StartServer(port, GameManager.Instance.StartGame))
+        {
             SwitchToNextScreen();
+            UIManager.Instance.OnStartWaiting();
+        }
     }
 
     void SwitchToNextScreen()

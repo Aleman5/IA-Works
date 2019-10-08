@@ -28,6 +28,28 @@ public class ConnectionRequestPacket : InternalPacket<ConnectionRequestData>
 }
 
 
+public struct DeclinedData
+{
+    public string reason;
+}
+public class DeclinedPacket : InternalPacket<DeclinedData>
+{
+    public DeclinedPacket() : base((ushort)PacketType.DeclinedRequest) { }
+
+    public override void OnSerialize(Stream stream)
+    {
+        BinaryWriter binaryWriter = new BinaryWriter(stream);
+        binaryWriter.Write(payload.reason);
+    }
+
+    public override void OnDeserialize(Stream stream)
+    {
+        BinaryReader binaryReader = new BinaryReader(stream);
+        payload.reason = binaryReader.ReadString();
+    }
+}
+
+
 public struct ChallengeRequestData
 {
     public uint clientId;

@@ -1,18 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MBSingleton<UIManager>
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("Texts")]
+    public Text waitingTxt;
+    public Text scoreTxt;
+    public Text enemyScoreTxt;
+
+    uint objectId = 2;
+
+    void OnEnable()
     {
-        
+        PacketManager.Instance.AddListenerByObjectId(objectId, OnReceivePacket);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
-        
+        PacketManager.Instance.RemoveListenerByObjectId(objectId);
+    }
+
+    void OnReceivePacket(uint packetId, ushort type, Stream stream)
+    {
+        if (type == (ushort)UserPacketType.Score)
+        {
+            ScorePacket scorePacket = new ScorePacket();
+            scorePacket.Deserialize(stream);
+
+            if (NetworkManager.Instance.isServer)
+                MessageManager.Instance.SendScore(scorePacket.payload, objectId);
+
+            enemyScoreTxt.text = "Enemy score: " + scorePacket.payload;
+        }
+    }
+
+    public void OnGameStart()
+    {
+        waitingTxt.enabled = false;
+        scoreTxt.enabled = true;
+        enemyScoreTxt.enabled = true;
+    }
+
+    public void OnStartWaiting()
+    {
+        waitingTxt.enabled = true;
+    }
+
+    public void OnScoreChange(int score)
+    {
+        scoreTxt.text = "My score: " + score;
     }
 }

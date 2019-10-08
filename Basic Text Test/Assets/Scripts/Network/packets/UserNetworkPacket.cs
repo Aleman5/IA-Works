@@ -1,13 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
 
-public enum UserPacketType
-{
-    Message,
-    Position,
-    Count
-}
-
 public class UserPacketHeader : MonoBehaviour, ISerializePacket
 {
     public uint packetId;

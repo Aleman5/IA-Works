@@ -2,24 +2,66 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MBSingleton<GameManager>
 {
+    [Header("Initialize data")]
     public GameObject coin;
     public Transform coinsParent;
     public Transform ring;
     public int offset = 2;
 
+    [Header("In-game elements")]
+    public GameObject myPlayer;
+    public GameObject enemyPlayer;
+
     List<GameObject> coins = new List<GameObject>();
 
-    void Awake()
+    public void StartGame(bool state)
     {
-        StartGame();
+        ActivateElements();
+        InitializeCoins();
+        UIManager.Instance.OnGameStart();
+
+        //StartCoroutine("InitMatch");
     }
 
-    public void StartGame()
+    IEnumerator InitMatch()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        ActivateElements();
+        InitializeCoins();
+        UIManager.Instance.OnGameStart();
+    }
+
+    public void UserConnected()
+    {
+        // Here i assign variables
+        GameObject temp = myPlayer;
+        myPlayer = enemyPlayer;
+        enemyPlayer = temp;
+
+        StartGame(true);
+    }
+
+
+    void ActivateElements()
+    {
+        ring.gameObject.SetActive(true);
+        myPlayer.SetActive(true);
+        enemyPlayer.SetActive(true);
+
+        AddComponents();
+    }
+
+    void InitializeCoins()
     {
         while (coins.Count > 0)
-            Destroy(coins[0]);
+        {
+            GameObject coin = coins[0];
+            coins.Remove(coin);
+            Destroy(coin);
+        }
 
         int height = (int)ring.localScale.x * 10;
         int widht = (int)ring.localScale.z * 10;
@@ -33,4 +75,14 @@ public class GameManager : MonoBehaviour
             }   
         }
     }
+
+    void AddComponents()
+    {
+        myPlayer.AddComponent<PlayerMovement>();
+        myPlayer.AddComponent<PlayerTrigger>();
+
+        enemyPlayer.AddComponent<PlayerUDP>();
+    }
+
+
 }

@@ -1,33 +1,44 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Varialbles")]
-    public float speed;
+    [Header("Variables")]
+    public float speed = 3;
     public int points = 0;
+
+    uint playerObjectId = 1;
+    uint pointsObjectId = 2;
 
     void Update()
     {
+        bool dataChanged = false;
+
         if (Input.GetKey(KeyCode.W))
         {
             transform.position += transform.forward * speed * Time.deltaTime;
+            dataChanged = true;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             transform.Rotate(0.0f, speed, 0.0f);
+            dataChanged = true;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
             transform.Rotate(0.0f, -speed, 0.0f);
+            dataChanged = true;
         }
+
+        if (dataChanged)
+            MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, playerObjectId);
     }
 
     public void UpdateScore(int amount)
     {
         points += amount;
+        UIManager.Instance.OnScoreChange(points);
+        MessageManager.Instance.SendScore(points, pointsObjectId);
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 public enum PacketType
 {
     ConnectionRequest,
+    DeclinedRequest,
     ChallengeRequest,
     ChallengeResponse,
     Connected,

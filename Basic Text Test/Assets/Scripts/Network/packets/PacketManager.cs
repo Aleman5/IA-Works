@@ -16,16 +16,16 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
     }
 
-    public void AddListenerById(uint ownerId, System.Action<uint, ushort, Stream> callback)
+    public void AddListenerByObjectId(uint objectId, System.Action<uint, ushort, Stream> callback)
     {
-        if (!onGamePacketReceived.ContainsKey(ownerId))
-            onGamePacketReceived.Add(ownerId, callback);
+        if (!onGamePacketReceived.ContainsKey(objectId))
+            onGamePacketReceived.Add(objectId, callback);
     }
 
-    public void RemoveListenerById(uint ownerId)
+    public void RemoveListenerByObjectId(uint objectId)
     {
-        if (onGamePacketReceived.ContainsKey(ownerId))
-            onGamePacketReceived.Remove(ownerId);
+        if (onGamePacketReceived.ContainsKey(objectId))
+            onGamePacketReceived.Remove(objectId);
     }
 
     public void SendGamePacket<T>(NetworkPacket<T> packet, uint objectId, bool reliable = false)
@@ -101,7 +101,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.Deserialize(stream);
             
-            if (onGamePacketReceived.ContainsKey(userHeader.objectId))
+            if (userHeader.senderId != ConnectionManager.Instance.clientId && onGamePacketReceived.ContainsKey(userHeader.objectId))
                 onGamePacketReceived[userHeader.objectId].Invoke(userHeader.packetId, userHeader.packetType, stream);
         }
         else

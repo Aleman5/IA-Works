@@ -34,9 +34,10 @@ public struct Client
 public class ConnectionManager : MBSingleton<ConnectionManager>
 {
     public readonly Dictionary<uint, Client> clients = new Dictionary<uint, Client>();
-    private readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
-    private System.Action<bool> onConnect;
-    private const float RESEND_REQUEST_RATE = 0.15f;
+    readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
+    System.Action<bool> onConnect;
+    const float RESEND_REQUEST_RATE = 0.15f;
+    const int DECLINED = 0;
 
     public enum State
     {
@@ -50,6 +51,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
     public uint clientId { get; private set; }
     public long clientSalt { get; private set; }
     public long serverSalt { get; private set; }
+    public const int MAXUSERS = 2;
 
     override protected void Awake()
     {
@@ -60,26 +62,29 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         PacketManager.Instance.onInternalPacketReceived += OnInternalPacketReceived;
     }
 
-    public bool StartServer(int port)
+    public bool StartServer(int port, System.Action<bool> onConnectCallback)
     {
         if (NetworkManager.Instance.StartServer(port))
         {
             state = State.Connected;
             
+            if (onConnectCallback != null)
+                onConnect += onConnectCallback;
+
             return true;
         }
 
         return false;
     }
 
-    public void ConnectToServer(IPAddress ip, int port, System.Action<bool> onConnectCallback)
+    public bool ConnectToServer(IPAddress ip, int port, System.Action<bool> onConnectCallback)
     {
         if (!NetworkManager.Instance.StartClient(ip, port))
         {
             if (onConnectCallback != null)
                 onConnectCallback(false);
             
-            return;
+            return false;
         }
 
         if (onConnectCallback != null)
@@ -89,11 +94,13 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         clientSalt = (long)Random.Range(0, float.MaxValue);
 
         SendConnectionRequest();
+
+        return true;
     }
 
     uint AddClient(long clientSalt, long serverSalt, IPEndPoint ip)
     {
-        if (!ipToId.ContainsKey(ip))
+        if (clients.Count < MAXUSERS - 1 && !ipToId.ContainsKey(ip))
         {
             uint id = 0;
             do
@@ -107,9 +114,11 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
 
             clients.Add(id, new Client(ip, id, clientSalt, serverSalt, Time.realtimeSinceStartup));
 
+            onConnect(true); // It's here to know when a Client is trying to connect
+
             return id;
         }
-        return 0;
+        return DECLINED;
     }
 
     void RemoveClient(IPEndPoint ip)
@@ -126,6 +135,13 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         ConnectionRequestPacket packet = new ConnectionRequestPacket();
         packet.payload.clientSalt = clientSalt;
         PacketManager.Instance.SendPacketToServer(packet);
+    }
+
+    void SendDeclinedRequest(IPEndPoint iPEndPoint)
+    {
+        DeclinedPacket packet = new DeclinedPacket();
+        packet.payload.reason = "Max clients reached";
+        PacketManager.Instance.SendPacketToClient(packet, iPEndPoint);
     }
 
     void SendChallengeRequest(uint clientId, long clientSalt, long serverSalt, IPEndPoint ipEndPoint)
@@ -157,6 +173,9 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         {
             case PacketType.ConnectionRequest:
                 OnConnectionRequest(stream, ipEndPoint);
+                break;
+            case PacketType.DeclinedRequest:
+                OnDeclinedRequest(stream, ipEndPoint);
                 break;
             case PacketType.ChallengeRequest:
                 OnChallenge(stream, ipEndPoint);
@@ -192,7 +211,28 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
                 id = AddClient(clientSalt, serverSalt, ipEndPoint);
             }
 
-            SendChallengeRequest(id, clientSalt, serverSalt, ipEndPoint);
+            if (id == DECLINED)
+            {
+                SendDeclinedRequest(ipEndPoint);
+            }
+            else
+            {
+                SendChallengeRequest(id, clientSalt, serverSalt, ipEndPoint);
+            }
+        }
+    }
+
+    void OnDeclinedRequest(Stream stream, IPEndPoint iPEndPoint)
+    {
+        if (!NetworkManager.Instance.isServer)
+        {
+            state = State.Disconnected;
+            clientSalt = serverSalt = -1;
+
+            DeclinedPacket packet = new DeclinedPacket();
+            packet.Deserialize(stream);
+
+            Debug.LogError(packet.payload.reason);
         }
     }
 
