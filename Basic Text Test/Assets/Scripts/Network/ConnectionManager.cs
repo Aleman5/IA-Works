@@ -101,7 +101,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
                 id = (uint)Random.Range(1, uint.MaxValue);
             } while (clients.ContainsKey(id));
 
-            Debug.Log("Adding client: " + ip.Address + " id: " + id);
+            Debug.Log("Adding client, ipAdress: " + ip.Address + " id: " + id);
 
             ipToId.Add(ip, id);
 
@@ -190,7 +190,6 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
             {
                 serverSalt = (long)Random.Range(0, float.MaxValue);
                 id = AddClient(clientSalt, serverSalt, ipEndPoint);
-                Debug.Log("Id: " + id);
             }
 
             SendChallengeRequest(id, clientSalt, serverSalt, ipEndPoint);

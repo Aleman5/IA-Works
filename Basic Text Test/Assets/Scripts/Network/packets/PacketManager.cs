@@ -95,18 +95,17 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         MemoryStream stream = new MemoryStream(data);
 
         header.Deserialize(stream);
-        UnityEngine.Debug.Log((PacketType)header.packetType);
+        
         if ((PacketType)header.packetType == PacketType.User)
         {
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.Deserialize(stream);
-            UnityEngine.Debug.Log((UserPacketType)userHeader.packetType);
+            
             if (onGamePacketReceived.ContainsKey(userHeader.objectId))
                 onGamePacketReceived[userHeader.objectId].Invoke(userHeader.packetId, userHeader.packetType, stream);
         }
         else
         {
-
             onInternalPacketReceived.Invoke(header.packetType, ipEndpoint, stream);
         }
 
