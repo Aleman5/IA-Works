@@ -16,42 +16,26 @@ public class GameManager : MBSingleton<GameManager>
 
     List<GameObject> coins = new List<GameObject>();
 
-    public void StartGame(bool state)
+    public void StartGame(bool isServer = true)
     {
         ActivateElements();
+        AddComponents(isServer);
         InitializeCoins();
         UIManager.Instance.OnGameStart();
 
         //StartCoroutine("InitMatch");
     }
 
-    IEnumerator InitMatch()
-    {
-        yield return new WaitForSeconds(1.0f);
-
-        ActivateElements();
-        InitializeCoins();
-        UIManager.Instance.OnGameStart();
-    }
-
     public void UserConnected()
     {
-        // Here i assign variables
-        GameObject temp = myPlayer;
-        myPlayer = enemyPlayer;
-        enemyPlayer = temp;
-
-        StartGame(true);
+        StartGame(false);
     }
-
 
     void ActivateElements()
     {
         ring.gameObject.SetActive(true);
         myPlayer.SetActive(true);
         enemyPlayer.SetActive(true);
-
-        AddComponents();
     }
 
     void InitializeCoins()
@@ -71,18 +55,28 @@ public class GameManager : MBSingleton<GameManager>
             for (int j = 2; j < widht - offset; j++)
             {
                 Vector3 pos = new Vector3(i + 0.5f, 0.5f, j + 0.5f);
-                coins.Add(Instantiate(coin, pos, transform.rotation, coinsParent));
+                GameObject go = Instantiate(coin, pos, transform.rotation, coinsParent);
+                go.GetComponent<Coin>().SetObjectId((uint)coins.Count + 1);
+                coins.Add(go);
             }   
         }
     }
 
-    void AddComponents()
+    void AddComponents(bool isServer)
     {
-        myPlayer.AddComponent<PlayerMovement>();
-        myPlayer.AddComponent<PlayerTrigger>();
+        if (isServer)
+        {
+            myPlayer.AddComponent<PlayerMovement>();
+            myPlayer.AddComponent<PlayerTrigger>();
 
-        enemyPlayer.AddComponent<PlayerUDP>();
+            enemyPlayer.AddComponent<PlayerUDP>();
+        }
+        else
+        {
+            enemyPlayer.AddComponent<PlayerMovement>();
+            enemyPlayer.AddComponent<PlayerTrigger>();
+
+            myPlayer.AddComponent<PlayerUDP>();
+        }
     }
-
-
 }

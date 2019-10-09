@@ -32,13 +32,13 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (dataChanged)
-            MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, playerObjectId);
+            MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, playerObjectId, ConnectionManager.Instance.clientId);
     }
 
     public void UpdateScore(int amount)
     {
         points += amount;
         UIManager.Instance.OnScoreChange(points);
-        MessageManager.Instance.SendScore(points, pointsObjectId);
+        MessageManager.Instance.SendScore(points, pointsObjectId, ConnectionManager.Instance.clientId);
     }
 }

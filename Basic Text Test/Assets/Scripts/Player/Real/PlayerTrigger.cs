@@ -15,6 +15,7 @@ public class PlayerTrigger : MonoBehaviour
         if (other.tag == "Coin")
         {
             playerMovement.UpdateScore(10);
+            other.GetComponent<Coin>().Touched();
             Destroy(other.gameObject);
         }
     }

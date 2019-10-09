@@ -35,7 +35,7 @@ public class ChatScreen : MBSingleton<ChatScreen>
             messagePacket.Deserialize(stream);
 
             if (NetworkManager.Instance.isServer)
-                MessageManager.Instance.SendString(messagePacket.payload, 0);
+                MessageManager.Instance.SendString(messagePacket.payload, objectId, messagePacket.senderId);
 
             messages.text += messagePacket.payload + System.Environment.NewLine;
         }
@@ -49,8 +49,8 @@ public class ChatScreen : MBSingleton<ChatScreen>
             {
                 if (NetworkManager.IsAvailable())
                     messages.text += inputMessage.text + System.Environment.NewLine;
-
-                MessageManager.Instance.SendString(inputMessage.text, objectId);
+                
+                MessageManager.Instance.SendString(inputMessage.text, objectId, ConnectionManager.Instance.clientId);
 
                 inputMessage.ActivateInputField();
                 inputMessage.Select();

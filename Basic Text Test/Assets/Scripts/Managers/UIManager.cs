@@ -29,8 +29,8 @@ public class UIManager : MBSingleton<UIManager>
             scorePacket.Deserialize(stream);
 
             if (NetworkManager.Instance.isServer)
-                MessageManager.Instance.SendScore(scorePacket.payload, objectId);
-
+                MessageManager.Instance.SendScore(scorePacket.payload, objectId, scorePacket.senderId);
+            
             enemyScoreTxt.text = "Enemy score: " + scorePacket.payload;
         }
     }

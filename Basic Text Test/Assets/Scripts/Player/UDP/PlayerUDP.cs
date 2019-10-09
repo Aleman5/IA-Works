@@ -23,7 +23,7 @@ public class PlayerUDP : MonoBehaviour
             positionPacket.Deserialize(stream);
 
             if (NetworkManager.Instance.isServer)
-                MessageManager.Instance.SendEntityInfo(positionPacket.payload.pos, positionPacket.payload.rot, objectId);
+                MessageManager.Instance.SendEntityInfo(positionPacket.payload.pos, positionPacket.payload.rot, objectId, positionPacket.senderId);
 
             transform.position = positionPacket.payload.pos;
             transform.rotation = positionPacket.payload.rot;

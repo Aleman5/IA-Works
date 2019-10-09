@@ -6,17 +6,18 @@ public enum UserPacketType
     Message,
     Position,
     Score,
+    Destroy,
     Count
 }
 
 public abstract class GamePacket<P> : NetworkPacket<P>
 {
-    public GamePacket(ushort packetType, ushort userPacketType) : base(packetType, userPacketType) { }
+    public GamePacket(ushort packetType, ushort userPacketType, uint senderId) : base(packetType, userPacketType, senderId) { }
 }
 
 public class MessagePacket : GamePacket<string>
 {
-    public MessagePacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Message) { }
+    public MessagePacket(uint senderId = 0) : base((ushort)PacketType.User, (ushort)UserPacketType.Message, senderId) { }
 
     public override void OnSerialize(Stream stream)
     {
@@ -39,7 +40,7 @@ public struct EntityInfo
 
 public class PositionPacket : GamePacket<EntityInfo>
 {
-    public PositionPacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Position) { }
+    public PositionPacket(uint senderId = 0) : base((ushort)PacketType.User, (ushort)UserPacketType.Position, senderId) { }
     
     public override void OnSerialize(Stream stream)
     {
@@ -68,7 +69,7 @@ public class PositionPacket : GamePacket<EntityInfo>
 
 public class ScorePacket : GamePacket<int>
 {
-    public ScorePacket() : base((ushort)PacketType.User, (ushort)UserPacketType.Score) { }
+    public ScorePacket(uint senderId = 0) : base((ushort)PacketType.User, (ushort)UserPacketType.Score, senderId) { }
     
     public override void OnSerialize(Stream stream)
     {
@@ -80,5 +81,22 @@ public class ScorePacket : GamePacket<int>
     {
         BinaryReader binaryReader = new BinaryReader(stream);
         payload = binaryReader.ReadInt32();
+    }
+}
+
+public class DestroyPacket : GamePacket<bool>
+{
+    public DestroyPacket(uint senderId = 0) : base((ushort)PacketType.User, (ushort)UserPacketType.Destroy, senderId) { }
+    
+    public override void OnSerialize(Stream stream)
+    {
+        BinaryWriter binaryWriter = new BinaryWriter(stream);
+        binaryWriter.Write(payload);
+    }
+
+    public override void OnDeserialize(Stream stream)
+    {
+        BinaryReader binaryReader = new BinaryReader(stream);
+        payload = binaryReader.ReadBoolean();
     }
 }

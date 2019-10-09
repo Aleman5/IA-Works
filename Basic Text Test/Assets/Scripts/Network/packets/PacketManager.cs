@@ -28,9 +28,9 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             onGamePacketReceived.Remove(objectId);
     }
 
-    public void SendGamePacket<T>(NetworkPacket<T> packet, uint objectId, bool reliable = false)
+    public void SendGamePacket<T>(NetworkPacket<T> packet, uint objectId, uint senderId, bool reliable = false)
     {
-        byte[] bytes = Serialize(packet, objectId);
+        byte[] bytes = Serialize(packet, objectId, senderId);
 
         if (NetworkManager.Instance.isServer)
             Broadcast(bytes);
@@ -63,7 +63,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         }
     }
 
-    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0)
+    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0)
     {
         PacketHeader header = new PacketHeader();
         MemoryStream stream = new MemoryStream();
@@ -77,7 +77,8 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.packetType = packet.userPacketType;
             userHeader.packetId   = currentPacketId++;
-            userHeader.senderId   = ConnectionManager.Instance.clientId;
+            //userHeader.senderId   = ConnectionManager.Instance.clientId;
+            userHeader.senderId   = senderId;
             userHeader.objectId   = objectId;
             userHeader.Serialize(stream);
         }
@@ -100,7 +101,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         {
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.Deserialize(stream);
-            
+            UnityEngine.Debug.Log("SenderId: " + userHeader.senderId + ", clientId: " + ConnectionManager.Instance.clientId);
             if (userHeader.senderId != ConnectionManager.Instance.clientId && onGamePacketReceived.ContainsKey(userHeader.objectId))
                 onGamePacketReceived[userHeader.objectId].Invoke(userHeader.packetId, userHeader.packetType, stream);
         }

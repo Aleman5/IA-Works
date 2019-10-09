@@ -67,6 +67,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
         if (NetworkManager.Instance.StartServer(port))
         {
             state = State.Connected;
+            clientId = 0;
             
             if (onConnectCallback != null)
                 onConnect += onConnectCallback;
