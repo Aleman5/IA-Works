@@ -47,10 +47,10 @@ public class ChatScreen : MBSingleton<ChatScreen>
         {
             if (inputMessage && inputMessage.text != "")
             {
-                if (NetworkManager.IsAvailable() && NetworkManager.Instance.isServer)
+                if (NetworkManager.IsAvailable())
                     messages.text += inputMessage.text + System.Environment.NewLine;
 
-                MessageManager.Instance.SendString(inputMessage.text, 0);
+                MessageManager.Instance.SendString(inputMessage.text, objectId);
 
                 inputMessage.ActivateInputField();
                 inputMessage.Select();
