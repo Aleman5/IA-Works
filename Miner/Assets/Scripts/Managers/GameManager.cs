@@ -1,21 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MBSingleton<GameManager>
 {
-    private static GameManager instance;
-
-    public static GameManager Instance {
-        get {
-            instance = FindObjectOfType<GameManager>();
-            if(instance == null) {
-                GameObject go = new GameObject("Managers");
-                instance = go.AddComponent<GameManager>();
-            }
-            return instance;
-        }
-    }
-
     [Header("Generation")]
     public NodeGenerator nodeGenerator;
     public PathGenerator pathGenerator;

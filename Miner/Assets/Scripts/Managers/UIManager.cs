@@ -4,27 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MBSingleton<UIManager>
 {
-    private static UIManager instance;
-
-    public static UIManager Instance {
-        get {
-            instance = FindObjectOfType<UIManager>();
-            if(instance == null) {
-                GameObject go = new GameObject("Managers");
-                instance = go.AddComponent<UIManager>();
-            }
-            return instance;
-        }
-    }
-
     [Header("Message")]
     public TextMeshProUGUI text;
 
-    private float time = 0.0f;
+    float time = 0.0f;
 
-    private void Update()
+    void Update()
     {
         if (text)
         {

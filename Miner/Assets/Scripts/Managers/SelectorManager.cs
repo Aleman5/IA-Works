@@ -2,21 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectorManager : MonoBehaviour
+public class SelectorManager : MBSingleton<SelectorManager>
 {
-    private static SelectorManager instance;
-
-    public static SelectorManager Instance {
-        get {
-            instance = FindObjectOfType<SelectorManager>();
-            if(instance == null) {
-                GameObject go = new GameObject("Managers");
-                instance = go.AddComponent<SelectorManager>();
-            }
-            return instance;
-        }
-    }
-
     public Camera mainCamera;
 
     Element element1 = null;
