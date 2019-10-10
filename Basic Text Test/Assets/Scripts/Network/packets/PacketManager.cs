@@ -101,7 +101,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         {
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.Deserialize(stream);
-            UnityEngine.Debug.Log("SenderId: " + userHeader.senderId + ", clientId: " + ConnectionManager.Instance.clientId);
+            
             if (userHeader.senderId != ConnectionManager.Instance.clientId && onGamePacketReceived.ContainsKey(userHeader.objectId))
                 onGamePacketReceived[userHeader.objectId].Invoke(userHeader.packetId, userHeader.packetType, stream);
         }
