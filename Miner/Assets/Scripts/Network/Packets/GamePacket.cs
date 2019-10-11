@@ -7,6 +7,7 @@ public enum UserPacketType
     Position,
     Score,
     Destroy,
+    GameEvent,
     Count
 }
 
@@ -98,5 +99,27 @@ public class DestroyPacket : GamePacket<bool>
     {
         BinaryReader binaryReader = new BinaryReader(stream);
         payload = binaryReader.ReadBoolean();
+    }
+}
+
+public struct GameEvent
+{
+    public ushort gameEvent;
+}
+
+public class GameEventPacket : GamePacket<GameEvent>
+{
+    public GameEventPacket(uint senderId = 0) : base((ushort)PacketType.User, (ushort)UserPacketType.GameEvent, senderId) { }
+    
+    public override void OnSerialize(Stream stream)
+    {
+        BinaryWriter binaryWriter = new BinaryWriter(stream);
+        binaryWriter.Write(payload.gameEvent);
+    }
+
+    public override void OnDeserialize(Stream stream)
+    {
+        BinaryReader binaryReader = new BinaryReader(stream);
+        payload.gameEvent = binaryReader.ReadUInt16();
     }
 }

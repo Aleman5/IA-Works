@@ -60,3 +60,10 @@ public enum EBState
     Fail,
     Count
 }
+
+public enum EGameEvent
+{
+    StartMatch,
+    FinishMatch,
+    PlayerDefeated,
+}

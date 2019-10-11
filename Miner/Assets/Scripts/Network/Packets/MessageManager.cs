@@ -2,11 +2,6 @@
 
 public class MessageManager : Singleton<MessageManager>
 {
-    override protected void Initialize()
-    {
-        base.Initialize();
-    }
-
     public void SendString(string message, uint objectId, uint senderId)
     {
         MessagePacket packet = new MessagePacket(senderId);
@@ -40,6 +35,15 @@ public class MessageManager : Singleton<MessageManager>
         DestroyPacket packet = new DestroyPacket(senderId);
 
         packet.payload = true;
+
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
+    }
+
+    public void SendGameEvent(ushort gameEvent, uint objectId, uint senderId)
+    {
+        GameEventPacket packet = new GameEventPacket(senderId);
+
+        packet.payload.gameEvent = gameEvent;
 
         PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
     }
