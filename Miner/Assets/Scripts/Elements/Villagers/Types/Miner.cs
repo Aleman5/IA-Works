@@ -139,12 +139,17 @@ public class Miner : Villager
             case EElement.Mine:
                 if (objective == mine) return;
 
-                Node mineObj = objective.GetComponent<Mine>().GetAvailableNode();
+                mine = objective.GetComponent<Mine>();
+                Node mineObj = mine.GetAvailableNode();
+
                 if (!mineObj)
                 {
                     OnObjectiveNotFound();
+                    mine = null;
                     return;
                 }
+                
+                mine.AddMiner(this);
 
                 GetPath(objective, mineObj.position);
                 break;
@@ -173,8 +178,6 @@ public class Miner : Villager
         switch (objective.elementType)
         {
             case EElement.Mine:
-                mine = objective.GetComponent<Mine>();
-                mine.AddMiner(this);
                 OnMineCollision();
             break;
 
