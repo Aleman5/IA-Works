@@ -63,6 +63,10 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         }
     }
 
+    /*
+        
+    */
+
     byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0)
     {
         PacketHeader header = new PacketHeader();
