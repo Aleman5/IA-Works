@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Boid : MonoBehaviour
 {
@@ -10,7 +8,9 @@ public class Boid : MonoBehaviour
 
     void Update()
     {
-        //Vector3 objDir = FlockingManager.Instance.CalculateDirectionObjective(this);
-        //transform.forward = Vector3.Slerp(transform.forward, objDir, rotSpeed * Time.deltaTime);
+        Vector3 objDir = FlockingManager.Instance.CalculateDirectionObjective(this);
+        transform.forward = Vector3.Slerp(transform.forward, objDir, rotSpeed * Time.deltaTime);
+
+        transform.Translate(transform.forward * speed * Time.deltaTime);
     }
 }

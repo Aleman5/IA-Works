@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockingManager : MonoBehaviour
+public class FlockingManager : MBSingleton<FlockingManager>
 {
-    // Hacerlo Singleton
-
     public Vector3 CalculateDirectionObjective(Boid thisBoid)
     {
         Vector3 dir = new Vector3();

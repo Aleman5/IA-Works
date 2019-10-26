@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockingLogic : MonoBehaviour
+public static class FlockingLogic
 {
     static public List<Transform> GetBoidsInRange(Vector3 origin, float radius)
     {
