@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 /*
@@ -15,16 +16,80 @@ Preguntas:
         Eso quiere decir que debe hacer procesos distintos a los clientes, aparte de enviar los packets a todos los clientes.
 */
 
+public struct AckData
+{
+    public uint sequence;
+    public byte[] packetBytes;
+}
+
 public class PacketSender : MBSingleton<PacketSender>
 {
-    Queue<byte[]> bytesToSend = new Queue<byte[]>();
+    AckData[] ackDatas = new AckData[intSize];
+
+    uint actualSequence = 0;
+
+    const int intSize = 32;
 
 
+    public void SendGamePacket(byte[] packetBytes, bool reliable = false)
+    {
+        if (reliable)
+        {
+            int index = (int)(actualSequence++ % intSize);
+            ackDatas[index].sequence = actualSequence;
+            ackDatas[index].packetBytes = packetBytes;
+        }
+
+        if (NetworkManager.Instance.isServer)
+            Broadcast(packetBytes);
+        else
+            NetworkManager.Instance.SendToServer(packetBytes);
+    }
+
+    public void SendPacketToServer(byte[] bytes)
+    {
+        NetworkManager.Instance.SendToServer(bytes);
+    }
+
+    public void SendPacketToClient(byte[] bytes, IPEndPoint iPEndPoint)
+    {
+        NetworkManager.Instance.SendToClient(bytes, iPEndPoint);
+    }
+
+    public void Broadcast(byte[] data)
+    {
+        using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+        {
+            while (iterator.MoveNext())
+            {
+                SendPacketToClient(data, iterator.Current.Value.ipEndPoint);
+            }
+        }
+    }
+
+    public void OnAcknowledgesReceived(uint lastPickedUp, int acks)
+    {
+        /*if (packetsWithoutAckId.Contains(lastPickedUp))
+        {
+            packetsWithoutAck.Remove(lastPickedUp);
+            packetsWithoutAckId.Remove(lastPickedUp);
+        }*/
+
+        /* Aca deberia hacer lo del shifting leyendo 'acks' */
+
+        /*do
+        {
+            if (acks)
+            {
+
+            }
+        } while ();*/
+    }
 
     /* ---------------  Packet bombardier  --------------- */
     float lastConnectionMsgTime;
 
-    const float RESEND_REQUEST_RATE = 0.1f;
+    const float RESEND_REQUEST_RATE = 0.03f;
 
     bool NeedToResend()
     {
@@ -39,10 +104,13 @@ public class PacketSender : MBSingleton<PacketSender>
             {
                 lastConnectionMsgTime = Time.realtimeSinceStartup;
 
-                foreach (byte[] bytes in bytesToSend)
+                int index = 0;
+
+                /*do
                 {
-                    NetworkManager.Instance.SendToServer(bytes);
-                }
+                    if (packetsWithoutAck.ContainsKey(packetsWithoutAckId[index]))
+                        NetworkManager.Instance.SendToServer(packetsWithoutAck[packetsWithoutAckId[index]]);
+                } while (++index < packetsWithoutAckId.Count);*/
             }
         }
     }

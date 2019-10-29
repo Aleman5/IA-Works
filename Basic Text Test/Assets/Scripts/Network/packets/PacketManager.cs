@@ -32,40 +32,22 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     {
         byte[] bytes = Serialize(packet, objectId, senderId);
 
-        if (NetworkManager.Instance.isServer)
-            Broadcast(bytes);
-        else
-            NetworkManager.Instance.SendToServer(bytes);
+        PacketSender.Instance.SendGamePacket(bytes, reliable);
     }
 
     public void SendPacketToServer<T>(NetworkPacket<T> packet)
     {
         byte[] bytes = Serialize(packet);
 
-        NetworkManager.Instance.SendToServer(bytes);
+        PacketSender.Instance.SendPacketToServer(bytes);
     }
 
     public void SendPacketToClient<T>(NetworkPacket<T> packet, IPEndPoint iPEndPoint)
     {
         byte[] bytes = Serialize(packet);
 
-        NetworkManager.Instance.SendToClient(bytes, iPEndPoint);
+        PacketSender.Instance.SendPacketToClient(bytes, iPEndPoint);
     }
-
-    public void Broadcast(byte[] data)
-    {
-        using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
-        {
-            while (iterator.MoveNext())
-            {
-                NetworkManager.Instance.SendToClient(data, iterator.Current.Value.ipEndPoint);
-            }
-        }
-    }
-
-    /*
-        
-    */
 
     byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0)
     {

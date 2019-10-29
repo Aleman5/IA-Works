@@ -33,4 +33,9 @@ public class MBSingleton<T> : MonoBehaviour where T : MBSingleton<T>
 
         Initialize();
     }
+
+    protected virtual void Start()
+    {
+
+    }
 }
