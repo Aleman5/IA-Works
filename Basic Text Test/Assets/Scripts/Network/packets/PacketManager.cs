@@ -30,7 +30,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
     public void SendGamePacket<T>(NetworkPacket<T> packet, uint objectId, uint senderId, bool reliable = false)
     {
-        byte[] bytes = Serialize(packet, objectId, senderId);
+        byte[] bytes = Serialize(packet, objectId, senderId, reliable);
 
         PacketSender.Instance.SendGamePacket(bytes, reliable);
     }
@@ -49,11 +49,12 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         PacketSender.Instance.SendPacketToClient(bytes, iPEndPoint);
     }
 
-    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0)
+    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0, bool reliable = false)
     {
         PacketHeader header = new PacketHeader();
         MemoryStream stream = new MemoryStream();
 
+        header.reliable = reliable;
         header.protocolId = 0;
         header.packetType = packet.packetType;
         header.Serialize(stream);
@@ -63,7 +64,6 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
             UserPacketHeader userHeader = new UserPacketHeader();
             userHeader.packetType = packet.userPacketType;
             userHeader.packetId   = currentPacketId++;
-            //userHeader.senderId   = ConnectionManager.Instance.clientId;
             userHeader.senderId   = senderId;
             userHeader.objectId   = objectId;
             userHeader.Serialize(stream);

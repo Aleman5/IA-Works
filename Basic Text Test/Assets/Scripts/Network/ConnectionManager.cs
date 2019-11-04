@@ -11,6 +11,7 @@ public struct Client
         Connected
     }
 
+    // Connection variables
     public uint id;
     public ClientState state;
     public long clientSalt;
@@ -18,13 +19,20 @@ public struct Client
     public float timeStamp;
     public IPEndPoint ipEndPoint;
 
+    // Packets variables
+    public AckData[] ackDatas;
+    public uint lastSequence;
+
     public Client(IPEndPoint ipEndPoint, uint id, long clientSalt, long serverSalt, float timeStamp)
     {
         this.ipEndPoint = ipEndPoint;
         this.id = id;
         this.clientSalt = clientSalt;
         this.serverSalt = serverSalt;
-        this.timeStamp = timeStamp;
+        this.timeStamp  = timeStamp;
+
+        this.ackDatas = new AckData[32];
+        this.lastSequence = 0;
 
         state = ClientState.NotConnected;
     }

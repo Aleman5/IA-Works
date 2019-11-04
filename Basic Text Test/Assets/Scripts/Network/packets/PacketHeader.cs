@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using UnityEngine;
 
 public class PacketHeader : ISerializePacket
 {
+    public bool reliable;
     public uint protocolId;
     public ushort packetType { get; set; }
 
@@ -10,6 +10,7 @@ public class PacketHeader : ISerializePacket
     {
         BinaryWriter binaryWriter = new BinaryWriter(stream);
         
+        binaryWriter.Write(reliable);
         binaryWriter.Write(protocolId);
         binaryWriter.Write(packetType);
 
@@ -20,6 +21,7 @@ public class PacketHeader : ISerializePacket
     {
         BinaryReader binaryReader = new BinaryReader(stream);
 
+        reliable   = binaryReader.ReadBoolean();
         protocolId = binaryReader.ReadUInt32();
         packetType = binaryReader.ReadUInt16();
 

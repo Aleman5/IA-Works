@@ -13,7 +13,7 @@ public class MessageManager : Singleton<MessageManager>
 
         packet.payload = message;
 
-        PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }
 
     public void SendEntityInfo(Vector3 position, Quaternion rotation, uint objectId, uint senderId)
@@ -23,7 +23,7 @@ public class MessageManager : Singleton<MessageManager>
         packet.payload.pos = position;
         packet.payload.rot = rotation;
 
-        PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }
 
     public void SendScore(int score, uint objectId, uint senderId)
@@ -32,7 +32,7 @@ public class MessageManager : Singleton<MessageManager>
 
         packet.payload = score;
 
-        PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }
 
     public void SendDestroyInfo(uint objectId, uint senderId)
@@ -41,6 +41,6 @@ public class MessageManager : Singleton<MessageManager>
 
         packet.payload = true;
 
-        PacketManager.Instance.SendGamePacket(packet, objectId, senderId);
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }
 }

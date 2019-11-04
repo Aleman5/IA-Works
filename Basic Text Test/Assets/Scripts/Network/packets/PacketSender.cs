@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using UnityEngine;
 
 /*
@@ -35,7 +34,7 @@ public class PacketSender : MBSingleton<PacketSender>
     {
         if (reliable)
         {
-            int index = (int)(actualSequence++ % intSize);
+            int index = (int)(++actualSequence % intSize);
             ackDatas[index].sequence = actualSequence;
             ackDatas[index].packetBytes = packetBytes;
         }
@@ -98,19 +97,37 @@ public class PacketSender : MBSingleton<PacketSender>
 
     void Update()
     {
-        if (!NetworkManager.Instance.isServer)
+        if (NeedToResend())
         {
-            if (NeedToResend())
+            if (!NetworkManager.Instance.isServer)
+                SendToServer();
+            else
+                SendToClients();
+        }
+    }
+
+    void SendToServer()
+    {
+        lastConnectionMsgTime = Time.realtimeSinceStartup;
+
+        int index = 0;
+        
+        do
+        {
+            if (ackDatas[index].sequence != 0)
+                NetworkManager.Instance.SendToServer(ackDatas[index].packetBytes);
+        } while (++index < intSize);
+    }
+
+    void SendToClients()
+    {
+        using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+        {
+            while (iterator.MoveNext())
             {
-                lastConnectionMsgTime = Time.realtimeSinceStartup;
+                
 
-                int index = 0;
-
-                /*do
-                {
-                    if (packetsWithoutAck.ContainsKey(packetsWithoutAckId[index]))
-                        NetworkManager.Instance.SendToServer(packetsWithoutAck[packetsWithoutAckId[index]]);
-                } while (++index < packetsWithoutAckId.Count);*/
+                //SendPacketToClient(data, iterator.Current.Value.ipEndPoint);
             }
         }
     }
