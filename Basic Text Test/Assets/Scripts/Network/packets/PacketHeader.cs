@@ -2,7 +2,6 @@
 
 public class PacketHeader : ISerializePacket
 {
-    public bool reliable;
     public uint protocolId;
     public ushort packetType { get; set; }
 
@@ -10,7 +9,6 @@ public class PacketHeader : ISerializePacket
     {
         BinaryWriter binaryWriter = new BinaryWriter(stream);
         
-        binaryWriter.Write(reliable);
         binaryWriter.Write(protocolId);
         binaryWriter.Write(packetType);
 
@@ -21,7 +19,6 @@ public class PacketHeader : ISerializePacket
     {
         BinaryReader binaryReader = new BinaryReader(stream);
 
-        reliable   = binaryReader.ReadBoolean();
         protocolId = binaryReader.ReadUInt32();
         packetType = binaryReader.ReadUInt16();
 
@@ -34,17 +31,23 @@ public class PacketHeader : ISerializePacket
 
 public class AckHeader : ISerializePacket
 {
+    public bool reliable;
     public uint sequence;
     public uint ack;
-    public int  ackBits;
+    public uint ackBits;
 
     public void Serialize(Stream stream)
     {
         BinaryWriter binaryWriter = new BinaryWriter(stream);
 
-        binaryWriter.Write(sequence);
-        binaryWriter.Write(ack);
-        binaryWriter.Write(ackBits);
+        binaryWriter.Write(reliable);
+
+        if (reliable)
+        {
+            binaryWriter.Write(sequence);
+            binaryWriter.Write(ack);
+            binaryWriter.Write(ackBits);
+        }
 
         OnSerialize(stream);
     }
@@ -53,9 +56,14 @@ public class AckHeader : ISerializePacket
     {
         BinaryReader binaryReader = new BinaryReader(stream);
 
-        sequence = binaryReader.ReadUInt32();
-        ack = binaryReader.ReadUInt32();
-        ackBits = binaryReader.ReadInt32();
+        reliable = binaryReader.ReadBoolean();
+
+        if (reliable)
+        {
+            sequence = binaryReader.ReadUInt32();
+            ack = binaryReader.ReadUInt32();
+            ackBits = binaryReader.ReadUInt32();
+        }
 
         OnDeserialize(stream);
     }

@@ -10,12 +10,6 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     Dictionary<uint, System.Action<uint, ushort, Stream>> onGamePacketReceived = new Dictionary<uint, System.Action<uint, ushort, Stream>>();
     uint currentPacketId = 0;
 
-    override protected void Initialize()
-    {
-        base.Initialize();
-        NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
-    }
-
     public void AddListenerByObjectId(uint objectId, System.Action<uint, ushort, Stream> callback)
     {
         if (!onGamePacketReceived.ContainsKey(objectId))
@@ -51,10 +45,15 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
     byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0, bool reliable = false)
     {
-        PacketHeader header = new PacketHeader();
         MemoryStream stream = new MemoryStream();
+        AckHeader ackHeader = new AckHeader();
 
-        header.reliable = reliable;
+        PacketSender.Instance.SetAckHeaderData(ref ackHeader, reliable);
+
+        ackHeader.Serialize(stream);
+
+        PacketHeader header = new PacketHeader();
+
         header.protocolId = 0;
         header.packetType = packet.packetType;
         header.Serialize(stream);
@@ -78,8 +77,12 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
     public void OnReceiveData(byte[] data, IPEndPoint ipEndpoint)
     {
-        PacketHeader header = new PacketHeader();
         MemoryStream stream = new MemoryStream(data);
+        AckHeader ackHeader = new AckHeader();
+
+        ackHeader.Deserialize(stream);
+
+        PacketHeader header = new PacketHeader();
 
         header.Deserialize(stream);
         

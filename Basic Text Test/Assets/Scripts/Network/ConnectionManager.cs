@@ -44,7 +44,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
     public readonly Dictionary<uint, Client> clients = new Dictionary<uint, Client>();
     readonly Dictionary<IPEndPoint, uint> ipToId = new Dictionary<IPEndPoint, uint>();
     System.Action<bool> onConnect;
-    const float RESEND_REQUEST_RATE = 0.15f;
+    const float RESEND_REQUEST_RATE = 0.03f;
     const int DECLINED = 0;
 
     public enum State
@@ -312,7 +312,7 @@ public class ConnectionManager : MBSingleton<ConnectionManager>
 
     void Update()
     {
-        if (!NetworkManager.Instance.isServer)
+        if (!NetworkManager.Instance.isServer && state != State.Connected)
         {
             if (NeedToResend())
             {

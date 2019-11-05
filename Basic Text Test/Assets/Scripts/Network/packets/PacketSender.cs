@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using UnityEngine;
 
 /*
@@ -19,24 +20,35 @@ public struct AckData
 {
     public uint sequence;
     public byte[] packetBytes;
+
+    public void Reset()
+    {
+        sequence = 0;
+        packetBytes = null;
+    }
 }
 
 public class PacketSender : MBSingleton<PacketSender>
 {
-    AckData[] ackDatas = new AckData[intSize];
+    const int intSize = 512;
 
-    uint actualSequence = 0;
+    public uint actualSequence = 0;
 
-    const int intSize = 32;
+    AckData[] seqs = new AckData[intSize];
 
+    override protected void Initialize()
+    {
+        base.Initialize();
+        NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
+    }
 
     public void SendGamePacket(byte[] packetBytes, bool reliable = false)
     {
         if (reliable)
         {
             int index = (int)(++actualSequence % intSize);
-            ackDatas[index].sequence = actualSequence;
-            ackDatas[index].packetBytes = packetBytes;
+            seqs[index].sequence = actualSequence;
+            seqs[index].packetBytes = packetBytes;
         }
 
         if (NetworkManager.Instance.isServer)
@@ -66,23 +78,55 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    public void OnAcknowledgesReceived(uint lastPickedUp, int acks)
+    public void OnAcknowledgesReceived(uint lastSeqReceived, int acks)
     {
-        /*if (packetsWithoutAckId.Contains(lastPickedUp))
+        if (lastSeqReceived == 0)
+            return;
+
+        seqs[lastSeqReceived % intSize].Reset();
+        
+        int index = -1;
+        int limit = intSize + (int)(lastSeqReceived - actualSequence);
+
+        while (++index <= limit)
         {
-            packetsWithoutAck.Remove(lastPickedUp);
-            packetsWithoutAckId.Remove(lastPickedUp);
-        }*/
+            if (actualSequence - lastSeqReceived - index < 0)
+                return;
 
-        /* Aca deberia hacer lo del shifting leyendo 'acks' */
+            //if ((acks & index) != 0)
 
-        /*do
+            if ((acks & (1 << index)) != 0)
+                seqs[(lastSeqReceived - index - 1) % intSize].Reset();
+        }
+    }
+
+    public void OnReceiveData(byte[] data, IPEndPoint ipEndpoint)
+    {
+        MemoryStream stream = new MemoryStream(data);
+        AckHeader ackHeader = new AckHeader();
+
+        ackHeader.Deserialize(stream);
+
+        if (ackHeader.reliable)
         {
-            if (acks)
-            {
+            
+        }
 
-            }
-        } while ();*/
+
+
+        PacketManager.Instance.OnReceiveData(data, ipEndpoint);
+    }
+
+    public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable)
+    {
+        ackHeader.reliable = reliable;
+        if (reliable)
+        {
+            ackHeader.sequence = ++actualSequence;
+        }
+
+        //ackHeader.ack = ;
+        //ackHeader.ackBits = ;
     }
 
     /* ---------------  Packet bombardier  --------------- */
@@ -99,6 +143,8 @@ public class PacketSender : MBSingleton<PacketSender>
     {
         if (NeedToResend())
         {
+            lastConnectionMsgTime = Time.realtimeSinceStartup;
+
             if (!NetworkManager.Instance.isServer)
                 SendToServer();
             else
@@ -108,14 +154,12 @@ public class PacketSender : MBSingleton<PacketSender>
 
     void SendToServer()
     {
-        lastConnectionMsgTime = Time.realtimeSinceStartup;
-
         int index = 0;
         
         do
         {
-            if (ackDatas[index].sequence != 0)
-                NetworkManager.Instance.SendToServer(ackDatas[index].packetBytes);
+            if (seqs[index].sequence != 0)
+                NetworkManager.Instance.SendToServer(seqs[index].packetBytes);
         } while (++index < intSize);
     }
 
@@ -125,9 +169,14 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             while (iterator.MoveNext())
             {
-                
+                int index = 0;
 
-                //SendPacketToClient(data, iterator.Current.Value.ipEndPoint);
+                do
+                {
+                    Client client = iterator.Current.Value;
+                    if (client.ackDatas[index].sequence != 0)
+                        NetworkManager.Instance.SendToClient(client.ackDatas[index].packetBytes, client.ipEndPoint);
+                } while (++index < intSize);
             }
         }
     }
