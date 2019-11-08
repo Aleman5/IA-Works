@@ -30,11 +30,11 @@ public struct AckData
 
 public class PacketSender : MBSingleton<PacketSender>
 {
-    const int intSize = 512;
+    const int aSize = 512;
 
     public uint actualSequence = 0;
 
-    AckData[] seqs = new AckData[intSize];
+    AckData[] seqs = new AckData[aSize];
 
     override protected void Initialize()
     {
@@ -46,7 +46,7 @@ public class PacketSender : MBSingleton<PacketSender>
     {
         if (reliable)
         {
-            int index = (int)(++actualSequence % intSize);
+            int index = (int)(++actualSequence % aSize);
             seqs[index].sequence = actualSequence;
             seqs[index].packetBytes = packetBytes;
         }
@@ -83,10 +83,10 @@ public class PacketSender : MBSingleton<PacketSender>
         if (lastSeqReceived == 0)
             return;
 
-        seqs[lastSeqReceived % intSize].Reset();
+        seqs[lastSeqReceived % aSize].Reset();
         
         int index = -1;
-        int limit = intSize + (int)(lastSeqReceived - actualSequence);
+        int limit = aSize + (int)(lastSeqReceived - actualSequence);
 
         while (++index <= limit)
         {
@@ -96,7 +96,7 @@ public class PacketSender : MBSingleton<PacketSender>
             //if ((acks & index) != 0)
 
             if ((acks & (1 << index)) != 0)
-                seqs[(lastSeqReceived - index - 1) % intSize].Reset();
+                seqs[(lastSeqReceived - index - 1) % aSize].Reset();
         }
     }
 
@@ -125,6 +125,7 @@ public class PacketSender : MBSingleton<PacketSender>
             ackHeader.sequence = ++actualSequence;
         }
 
+        // Estos dos datos deberian llenarse mediante un metodo
         //ackHeader.ack = ;
         //ackHeader.ackBits = ;
     }
@@ -160,7 +161,7 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             if (seqs[index].sequence != 0)
                 NetworkManager.Instance.SendToServer(seqs[index].packetBytes);
-        } while (++index < intSize);
+        } while (++index < aSize);
     }
 
     void SendToClients()
@@ -176,7 +177,7 @@ public class PacketSender : MBSingleton<PacketSender>
                     Client client = iterator.Current.Value;
                     if (client.ackDatas[index].sequence != 0)
                         NetworkManager.Instance.SendToClient(client.ackDatas[index].packetBytes, client.ipEndPoint);
-                } while (++index < intSize);
+                } while (++index < aSize);
             }
         }
     }
