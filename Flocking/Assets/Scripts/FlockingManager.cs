@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockingManager : Singleton<FlockingManager>
+public class FlockingManager : MBSingleton<FlockingManager>
 {
     public Vector3 CalculateDirectionObjective(Boid thisBoid)
     {
