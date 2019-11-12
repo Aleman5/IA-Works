@@ -33,8 +33,10 @@ public class PacketSender : MBSingleton<PacketSender>
     const int aSize = 512;
 
     public uint actualSequence = 0;
+    public uint lastSequenceReceived = 1;
 
     AckData[] seqs = new AckData[aSize];
+    bool[] acks = new bool[aSize];
 
     override protected void Initialize()
     {
@@ -107,12 +109,20 @@ public class PacketSender : MBSingleton<PacketSender>
 
         ackHeader.Deserialize(stream);
 
+        uint id = ackHeader.ack % aSize;
+
         if (ackHeader.reliable)
         {
-            
+            acks[ackHeader.sequence % aSize] = true;
+
+            seqs[ackHeader.ack % aSize].Reset();
+
+            for (int i = (int)Mathf.Min(31, ackHeader.ack); i >= 0; i--)
+            {
+                if ((ackHeader.ackBits & (1 << i)) != 0)
+                    seqs[(ackHeader.ack - i - 1) % aSize].Reset();
+            }
         }
-
-
 
         PacketManager.Instance.OnReceiveData(data, ipEndpoint);
     }
@@ -124,10 +134,16 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             ackHeader.sequence = ++actualSequence;
         }
+        
+        ackHeader.ack = lastSequenceReceived % aSize;
 
-        // Estos dos datos deberian llenarse mediante un metodo
-        //ackHeader.ack = ;
-        //ackHeader.ackBits = ;
+        for (int i = 31; i >= 0 && i < lastSequenceReceived; i--)
+        {
+            int id = ((int)(lastSequenceReceived - i - 1)) % aSize;
+           
+            if (seqs[id].sequence != 0)
+                ackHeader.ackBits |= (uint)(1 << i);
+        }
     }
 
     /* ---------------  Packet bombardier  --------------- */
