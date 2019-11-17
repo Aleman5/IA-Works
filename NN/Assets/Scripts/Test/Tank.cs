@@ -30,6 +30,7 @@ public class Tank : TankBase
         float[] output = brain.Synapsis(inputs);
 
         SetForces(output[0], output[1], dt);
+        Shoot(output[2], dt);
 	}
     
     protected override void OnTakeMine(GameObject mine)
@@ -38,6 +39,18 @@ public class Tank : TankBase
             fitness *= 2;
         else
             fitness *= 0.5f;
+        genome.fitness = fitness;
+    }
+
+    public override void OnTakeGoodMine()
+    {
+        fitness *= 2.0f;
+        genome.fitness = fitness;
+    }
+
+    public override void OnTakeBadMine()
+    {
+        fitness *= 0.5f;
         genome.fitness = fitness;
     }
 }

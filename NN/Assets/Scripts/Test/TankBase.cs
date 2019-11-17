@@ -5,6 +5,7 @@ public class TankBase : MonoBehaviour
 {
     public float Speed = 10.0f;
     public float RotSpeed = 20.0f;
+    public float maxDist = 10.0f;
 
     protected Genome genome;
 	protected NeuralNetwork brain;
@@ -72,6 +73,12 @@ public class TankBase : MonoBehaviour
 
     }
 
+    protected void Shoot(float force, float dt)
+    {
+        //Fuerza del disparo == force * maxDist;
+        //Instantiate(Bullet xD).GetComp(BulletTrigger).creator = this;
+    }
+
 	// Update is called once per frame
 	public void Think(float dt) 
 	{
@@ -91,6 +98,14 @@ public class TankBase : MonoBehaviour
     }
 
     protected virtual void OnTakeMine(GameObject mine)
+    {
+    }
+
+    public virtual void OnTakeGoodMine()
+    {
+    }
+
+    public virtual void OnTakeBadMine()
     {
     }
 
