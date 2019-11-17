@@ -5842,7 +5842,7 @@ MonoBehaviour:
   EliteCount: 4
   MutationChance: 0.11
   MutationRate: 0.02
-  InputsCount: 4
+  InputsCount: 5
   HiddenLayers: 1
   OutputsCount: 2
   NeuronsCountPerHL: 7

@@ -12,16 +12,19 @@ public class Tank : TankBase
     protected override void OnThink(float dt) 
 	{
         // Direction to closest mine (normalized!)
-        Vector3 dirToMine = GetDirToMine(nearMine);
+        Vector3 dirToGoodMine = GetDirToMine(goodMine);
+        Vector3 dirToBadMine = GetDirToMine(badMine);
 
         // Current tank view direction (it's always normalized)
         Vector3 dir = this.transform.forward;
 
         // Sets current tank view direction and direction to the mine as inputs to the Neural Network
-        inputs[0] = dirToMine.x;
-        inputs[1] = dirToMine.z;
-        inputs[2] = dir.x;
-        inputs[3] = dir.z;
+        inputs[0] = dirToGoodMine.x;
+        inputs[1] = dirToGoodMine.z;
+        inputs[2] = dirToBadMine.x;
+        inputs[3] = dirToBadMine.z;
+        inputs[4] = dir.x;
+        inputs[5] = dir.z;
 
         // Think!!! 
         float[] output = brain.Synapsis(inputs);
@@ -31,7 +34,10 @@ public class Tank : TankBase
     
     protected override void OnTakeMine(GameObject mine)
     {
-        fitness *= 2;
+        if (mine.tag == "GoodMine")
+            fitness *= 2;
+        else
+            fitness *= 0.5f;
         genome.fitness = fitness;
     }
 }

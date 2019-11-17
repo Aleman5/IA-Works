@@ -38,9 +38,9 @@ public class TankBase : MonoBehaviour
         badMine = mine;
     }
 
-    protected bool IsGoodMine(GameObject mine)
+    protected bool IsGoodMine()
     {
-        return goodMine == mine;
+        return nearMine.tag == "GoodMine";
     }
 
     protected Vector3 GetDirToMine(GameObject mine)

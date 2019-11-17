@@ -320,6 +320,7 @@ public class PopulationManager : MonoBehaviour
             GameObject go = Instantiate<GameObject>(MinePrefab, position, Quaternion.identity);
 
             bool good = Random.Range(-1.0f, 1.0f) >= 0;
+            go.tag = good ? "GoodMine" : "BadMine";
 
             SetMineGood(good, go);
 
@@ -350,6 +351,7 @@ public class PopulationManager : MonoBehaviour
             badMines.Remove(mine);
 
         bool good = Random.Range(-1.0f, 1.0f) >= 0;
+        mine.tag = good ? "GoodMine" : "BadMine";
 
         SetMineGood(good, mine);
 
