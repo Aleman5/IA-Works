@@ -50,9 +50,26 @@ public class PacketSender : MBSingleton<PacketSender>
     {
         if (reliable)
         {
-            int index = (int)(++actualSequence % aSize);
-            seqs[index].sequence = actualSequence;
-            seqs[index].packetBytes = packetBytes;
+            if (!NetworkManager.Instance.isServer)
+            {
+                uint index = (++actualSequence) % aSize;
+                seqs[index].sequence = actualSequence;
+                seqs[index].packetBytes = packetBytes;
+            }
+            else
+            {
+                using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+                {
+                    while (iterator.MoveNext())
+                    {
+                        Client client = iterator.Current.Value;
+
+                        uint index = (++client.actualSequence) % aSize;
+                        client.seqs[index].sequence = actualSequence;
+                        client.seqs[index].packetBytes = packetBytes;
+                    }
+                }
+            }
         }
 
         if (NetworkManager.Instance.isServer)
@@ -82,28 +99,6 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    public void OnAcknowledgesReceived(uint lastSeqReceived, int acks)
-    {
-        if (lastSeqReceived == 0)
-            return;
-
-        seqs[lastSeqReceived % aSize].Reset();
-        
-        int index = -1;
-        int limit = aSize + (int)(lastSeqReceived - actualSequence);
-
-        while (++index <= limit)
-        {
-            if (actualSequence - lastSeqReceived - index < 0)
-                return;
-
-            //if ((acks & index) != 0)
-
-            if ((acks & (1 << index)) != 0)
-                seqs[(lastSeqReceived - index - 1) % aSize].Reset();
-        }
-    }
-
     public void OnReceiveData(byte[] data, IPEndPoint iPEndPoint)
     {
         MemoryStream stream = new MemoryStream(data);
@@ -113,20 +108,24 @@ public class PacketSender : MBSingleton<PacketSender>
 
         if (ackHeader.reliable)
         {
-            acks[ackHeader.sequence % aSize] = true;
-
-            if (lastSequenceReceived < ackHeader.sequence)
-                lastSequenceReceived = ackHeader.sequence;
-
-            seqs[ackHeader.ack % aSize].Reset();
-
-            for (int i = (int)Mathf.Min(31, ackHeader.ack); i >= 0; i--)
+            if (!NetworkManager.Instance.isServer)
             {
-                if ((ackHeader.ackBits & (1 << i)) != 0)
-                    seqs[(ackHeader.ack - i - 1) % aSize].Reset();
+                ManageAcks(ackHeader, ref seqs, ref acks, ref lastSequenceReceived);
+                ManageReliablePacket(data, iPEndPoint, ackHeader, ref packetsToProcess, ref lastSequenceProcessed);
             }
+            else
+            {
+                using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+                {
+                    while (iterator.MoveNext())
+                    {
+                        Client client = iterator.Current.Value;
 
-            ManageReliablePacket(data, iPEndPoint, ackHeader);
+                        ManageAcks(ackHeader, ref client.seqs, ref client.acks, ref client.lastSequenceReceived);
+                        ManageReliablePacket(data, iPEndPoint, ackHeader, ref client.packetsToProcess, ref client.lastSequenceProcessed);
+                    }
+                }
+            }
         }
         else
         {
@@ -134,36 +133,55 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    private void ManageReliablePacket(byte[] data, IPEndPoint iPEndPoint, AckHeader ackHeader)
+    private void ManageAcks(AckHeader ackHeader, ref AckData[] _seqs, ref bool[] _acks, ref uint _lastSequenceReceived)
     {
-        if (ackHeader.sequence - lastSequenceProcessed == 1)
+        _acks[ackHeader.sequence % aSize] = true;
+
+        if (_lastSequenceReceived < ackHeader.sequence)
+            _lastSequenceReceived = ackHeader.sequence;
+
+        _seqs[ackHeader.ack % aSize].Reset();
+
+        for (int i = (int)Mathf.Min(31, ackHeader.ack); i >= 0; i--)
+        {
+            if ((ackHeader.ackBits & (1 << i)) != 0)
+                _seqs[(ackHeader.ack - i - 1) % aSize].Reset();
+        }
+    }
+
+    private void ManageReliablePacket(byte[] data, IPEndPoint iPEndPoint, AckHeader ackHeader, ref PacketToProcess[] _packetsToProcess, ref uint _lastSequenceProcessed)
+    {
+        if (ackHeader.sequence <= _lastSequenceProcessed)
+            return;
+
+        if (ackHeader.sequence - _lastSequenceProcessed == 1)
         {
             PacketManager.Instance.OnReceiveData(data, iPEndPoint);
 
-            lastSequenceProcessed++;
+            _lastSequenceProcessed++;
 
-            uint id = (lastSequenceProcessed + 1) % aSize;
+            uint id = (_lastSequenceProcessed + 1) % aSize;
 
-            while (packetsToProcess[id].sequence != 0)
+            while (_packetsToProcess[id].sequence != 0)
             {
-                PacketManager.Instance.OnReceiveData(packetsToProcess[id].bytes, packetsToProcess[id].iPEndPoint);
-                packetsToProcess[id].Reset();
+                PacketManager.Instance.OnReceiveData(_packetsToProcess[id].bytes, _packetsToProcess[id].iPEndPoint);
+                _packetsToProcess[id].Reset();
                 
                 id++;
-                lastSequenceProcessed++;
+                _lastSequenceProcessed++;
             }
         }
         else
         {
             uint id = ackHeader.sequence % aSize;
 
-            packetsToProcess[id].iPEndPoint = iPEndPoint;
-            packetsToProcess[id].sequence   = ackHeader.sequence;
-            packetsToProcess[id].bytes      = data;
+            _packetsToProcess[id].iPEndPoint = iPEndPoint;
+            _packetsToProcess[id].sequence   = ackHeader.sequence;
+            _packetsToProcess[id].bytes      = data;
         }
     }
 
-    public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable)
+    public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable = false)
     {
         ackHeader.reliable = reliable;
         if (reliable)
@@ -207,13 +225,14 @@ public class PacketSender : MBSingleton<PacketSender>
 
     void SendToServer()
     {
-        int index = 0;
+        uint index = 0;
         
         do
         {
-            if (seqs[index].sequence != 0)
-                NetworkManager.Instance.SendToServer(seqs[index].packetBytes);
-        } while (++index < aSize);
+            uint id = (actualSequence - index) % aSize;
+            if (seqs[id].sequence != 0)
+                NetworkManager.Instance.SendToServer(seqs[id].packetBytes);
+        } while (++index < 64);
     }
 
     void SendToClients()
@@ -222,14 +241,15 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             while (iterator.MoveNext())
             {
-                int index = 0;
+                uint index = 0;
 
                 do
                 {
                     Client client = iterator.Current.Value;
-                    if (client.seqs[index].sequence != 0)
-                        NetworkManager.Instance.SendToClient(client.seqs[index].packetBytes, client.ipEndPoint);
-                } while (++index < aSize);
+                    uint id = (client.actualSequence - index) % aSize;
+                    if (client.seqs[id].sequence != 0)
+                        NetworkManager.Instance.SendToClient(client.seqs[id].packetBytes, client.ipEndPoint);
+                } while (++index < 64);
             }
         }
     }
