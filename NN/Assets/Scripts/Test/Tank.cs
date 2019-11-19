@@ -30,7 +30,6 @@ public class Tank : TankBase
         float[] output = brain.Synapsis(inputs);
 
         SetForces(output[0], output[1], dt);
-        Shoot(output[2], dt);
 	}
     
     protected override void OnTakeMine(GameObject mine)
@@ -52,5 +51,10 @@ public class Tank : TankBase
     {
         fitness *= 0.5f;
         genome.fitness = fitness;
+    }
+
+    private float DistToGoodMine()
+    {
+        return Mathf.Clamp(((transform.position - goodMine.transform.position).magnitude) / maxDist, 0.0f, 1.0f);
     }
 }

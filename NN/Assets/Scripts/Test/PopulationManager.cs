@@ -345,7 +345,7 @@ public class PopulationManager : MonoBehaviour
 
     public void RelocateMine(GameObject mine)
     {
-        if (goodMines.Contains(mine))
+        if (mine.tag == "GoodMine")
             goodMines.Remove(mine);
         else
             badMines.Remove(mine);

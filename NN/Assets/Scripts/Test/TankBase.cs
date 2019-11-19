@@ -3,9 +3,15 @@ using System.Collections;
 
 public class TankBase : MonoBehaviour
 {
+    [Header("Variables")]
     public float Speed = 10.0f;
     public float RotSpeed = 20.0f;
     public float maxDist = 10.0f;
+    public float fireRate = 2.0f;
+
+    [Header("Objetcs")]
+    public GameObject bulletPrefab;
+    public Transform bulletOrigin;
 
     protected Genome genome;
 	protected NeuralNetwork brain;
@@ -13,6 +19,10 @@ public class TankBase : MonoBehaviour
     protected GameObject goodMine;
     protected GameObject badMine;
     protected float[] inputs;
+
+    float timeLeft = 0.0f;
+    GameObject bullet;
+    Rigidbody bulletRb;
 
     // Sets a brain to the tank
     public void SetBrain(Genome genome, NeuralNetwork brain)
@@ -70,27 +80,42 @@ public class TankBase : MonoBehaviour
 
         // Sets current position
         this.transform.position = pos;
-
     }
 
-    protected void Shoot(float force, float dt)
-    {
-        //Fuerza del disparo == force * maxDist;
-        //Instantiate(Bullet xD).GetComp(BulletTrigger).creator = this;
-    }
-
-	// Update is called once per frame
+	// Think is called once per frame
 	public void Think(float dt) 
 	{
         OnThink(dt);
 
-        if(IsCloseToMine(nearMine))
+        /*if(IsCloseToMine(nearMine))
         {
             OnTakeMine(nearMine);
             // Move the mine to a random position in the screen
             PopulationManager.Instance.RelocateMine(nearMine);
-        }
+        }*/
 	}
+
+    private void Awake()
+    {
+        timeLeft = fireRate;
+        bullet = Instantiate(bulletPrefab, bulletOrigin.position, transform.rotation);
+        bullet.SetActive(false);
+        bulletRb = bullet.GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        timeLeft -= Time.fixedDeltaTime;
+        
+        if (timeLeft <= 0.0f)
+        {
+            timeLeft = fireRate;
+
+            bullet.SetActive(true);
+            bullet.transform.position = bulletOrigin.position;
+            bullet.transform.rotation = bulletOrigin.rotation;
+        }
+    }
 
     protected virtual void OnThink(float dt)
     {
