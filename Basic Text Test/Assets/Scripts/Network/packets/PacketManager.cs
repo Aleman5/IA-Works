@@ -49,7 +49,6 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         AckHeader ackHeader = new AckHeader();
 
         PacketSender.Instance.SetAckHeaderData(ref ackHeader, reliable);
-
         ackHeader.Serialize(stream);
 
         PacketHeader header = new PacketHeader();
@@ -61,6 +60,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         if (packet.packetType == (ushort)PacketType.User)
         {
             UserPacketHeader userHeader = new UserPacketHeader();
+
             userHeader.packetType = packet.userPacketType;
             userHeader.packetId   = currentPacketId++;
             userHeader.senderId   = senderId;
@@ -89,6 +89,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
         if ((PacketType)header.packetType == PacketType.User)
         {
             UserPacketHeader userHeader = new UserPacketHeader();
+            
             userHeader.Deserialize(stream);
             
             if (userHeader.senderId != ConnectionManager.Instance.clientId && onGamePacketReceived.ContainsKey(userHeader.objectId))

@@ -2,20 +2,6 @@
 using System.Net;
 using UnityEngine;
 
-/*
-Data necesaria:
-    - Cliente
-        - Lista de packets que todavía no retornaron su acknowledge (estos se enviarán cada RESEND_REQUEST_RATE).
-        - Diccionario de <PacketId, ListIndex> (para que, a la hora de recibir un acknowledge sepa qué packet eliminar de la lista).
-    - Server
-        - Lista de packets por cliente obtenidos ese frame.
-        - Lista de packetId por cliente con el valor del packetId más alto.
-
-Preguntas:
-    - ¿El server de qué se encarga? Bettini había mencionado que el host debía ser el de mejor PC.
-        Eso quiere decir que debe hacer procesos distintos a los clientes, aparte de enviar los packets a todos los clientes.
-*/
-
 public struct AckData
 {
     public uint sequence;
@@ -28,15 +14,31 @@ public struct AckData
     }
 }
 
+public struct PacketToProcess
+{
+    public IPEndPoint iPEndPoint;
+    public uint sequence;
+    public byte[] bytes;
+
+    public void Reset()
+    {
+        iPEndPoint = null;
+        sequence = 0;
+        bytes = null;
+    }
+}
+
 public class PacketSender : MBSingleton<PacketSender>
 {
     const int aSize = 512;
 
     public uint actualSequence = 0;
     public uint lastSequenceReceived = 1;
+    public uint lastSequenceProcessed = 0;
 
     AckData[] seqs = new AckData[aSize];
     bool[] acks = new bool[aSize];
+    PacketToProcess[] packetsToProcess = new PacketToProcess[aSize];
 
     override protected void Initialize()
     {
@@ -102,18 +104,19 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    public void OnReceiveData(byte[] data, IPEndPoint ipEndpoint)
+    public void OnReceiveData(byte[] data, IPEndPoint iPEndPoint)
     {
         MemoryStream stream = new MemoryStream(data);
         AckHeader ackHeader = new AckHeader();
 
         ackHeader.Deserialize(stream);
 
-        uint id = ackHeader.ack % aSize;
-
         if (ackHeader.reliable)
         {
             acks[ackHeader.sequence % aSize] = true;
+
+            if (lastSequenceReceived < ackHeader.sequence)
+                lastSequenceReceived = ackHeader.sequence;
 
             seqs[ackHeader.ack % aSize].Reset();
 
@@ -122,9 +125,42 @@ public class PacketSender : MBSingleton<PacketSender>
                 if ((ackHeader.ackBits & (1 << i)) != 0)
                     seqs[(ackHeader.ack - i - 1) % aSize].Reset();
             }
-        }
 
-        PacketManager.Instance.OnReceiveData(data, ipEndpoint);
+            ManageReliablePacket(data, iPEndPoint, ackHeader);
+        }
+        else
+        {
+            PacketManager.Instance.OnReceiveData(data, iPEndPoint);
+        }
+    }
+
+    private void ManageReliablePacket(byte[] data, IPEndPoint iPEndPoint, AckHeader ackHeader)
+    {
+        if (ackHeader.sequence - lastSequenceProcessed == 1)
+        {
+            PacketManager.Instance.OnReceiveData(data, iPEndPoint);
+
+            lastSequenceProcessed++;
+
+            uint id = (lastSequenceProcessed + 1) % aSize;
+
+            while (packetsToProcess[id].sequence != 0)
+            {
+                PacketManager.Instance.OnReceiveData(packetsToProcess[id].bytes, packetsToProcess[id].iPEndPoint);
+                packetsToProcess[id].Reset();
+                
+                id++;
+                lastSequenceProcessed++;
+            }
+        }
+        else
+        {
+            uint id = ackHeader.sequence % aSize;
+
+            packetsToProcess[id].iPEndPoint = iPEndPoint;
+            packetsToProcess[id].sequence   = ackHeader.sequence;
+            packetsToProcess[id].bytes      = data;
+        }
     }
 
     public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable)
@@ -191,8 +227,8 @@ public class PacketSender : MBSingleton<PacketSender>
                 do
                 {
                     Client client = iterator.Current.Value;
-                    if (client.ackDatas[index].sequence != 0)
-                        NetworkManager.Instance.SendToClient(client.ackDatas[index].packetBytes, client.ipEndPoint);
+                    if (client.seqs[index].sequence != 0)
+                        NetworkManager.Instance.SendToClient(client.seqs[index].packetBytes, client.ipEndPoint);
                 } while (++index < aSize);
             }
         }
