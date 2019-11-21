@@ -31,10 +31,10 @@ public class PacketHeader : ISerializePacket
 
 public class AckHeader : ISerializePacket
 {
-    public bool reliable;
-    public uint sequence;
-    public uint ack;
-    public uint ackBits;
+    public bool reliable = false;
+    public uint sequence = 0;
+    public uint ack = 0;
+    public uint ackBits = 0;
 
     public void Serialize(Stream stream)
     {

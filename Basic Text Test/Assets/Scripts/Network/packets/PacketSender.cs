@@ -52,7 +52,7 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             if (!NetworkManager.Instance.isServer)
             {
-                uint index = (++actualSequence) % aSize;
+                uint index = actualSequence % aSize;
                 seqs[index].sequence = actualSequence;
                 seqs[index].packetBytes = packetBytes;
             }
@@ -64,7 +64,7 @@ public class PacketSender : MBSingleton<PacketSender>
                     {
                         Client client = iterator.Current.Value;
 
-                        uint index = (++client.actualSequence) % aSize;
+                        uint index = client.actualSequence % aSize;
                         client.seqs[index].sequence = actualSequence;
                         client.seqs[index].packetBytes = packetBytes;
                     }
@@ -110,8 +110,11 @@ public class PacketSender : MBSingleton<PacketSender>
         {
             if (!NetworkManager.Instance.isServer)
             {
-                ManageAcks(ackHeader, ref seqs, ref acks, ref lastSequenceReceived);
-                ManageReliablePacket(data, iPEndPoint, ackHeader, ref packetsToProcess, ref lastSequenceProcessed);
+                if (ackHeader.sequence > lastSequenceProcessed)
+                {
+                    ManageAcks(ackHeader, ref seqs, ref acks, ref lastSequenceReceived);
+                    ManageReliablePacket(data, iPEndPoint, ackHeader, ref packetsToProcess, ref lastSequenceProcessed);
+                }
             }
             else
             {
@@ -121,8 +124,11 @@ public class PacketSender : MBSingleton<PacketSender>
                     {
                         Client client = iterator.Current.Value;
 
-                        ManageAcks(ackHeader, ref client.seqs, ref client.acks, ref client.lastSequenceReceived);
-                        ManageReliablePacket(data, iPEndPoint, ackHeader, ref client.packetsToProcess, ref client.lastSequenceProcessed);
+                        if (ackHeader.sequence > client.lastSequenceProcessed)
+                        {
+                            ManageAcks(ackHeader, ref client.seqs, ref client.acks, ref client.lastSequenceReceived);
+                            ManageReliablePacket(data, iPEndPoint, ackHeader, ref client.packetsToProcess, ref client.lastSequenceProcessed);
+                        }
                     }
                 }
             }
@@ -183,20 +189,19 @@ public class PacketSender : MBSingleton<PacketSender>
 
     public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable = false)
     {
-        ackHeader.reliable = reliable;
         if (reliable)
         {
+            ackHeader.reliable = reliable;
             ackHeader.sequence = ++actualSequence;
-        }
-        
-        ackHeader.ack = lastSequenceReceived % aSize;
+            ackHeader.ack = lastSequenceReceived % aSize;
 
-        for (int i = 31; i >= 0 && i < lastSequenceReceived; i--)
-        {
-            int id = ((int)(lastSequenceReceived - i - 1)) % aSize;
-           
-            if (seqs[id].sequence != 0)
-                ackHeader.ackBits |= (uint)(1 << i);
+            for (int i = 31; i >= 0 && i < lastSequenceReceived; i--)
+            {
+                int id = ((int)(lastSequenceReceived - i - 1)) % aSize;
+            
+                if (seqs[id].sequence != 0)
+                    ackHeader.ackBits |= (uint)(1 << i);
+            }
         }
     }
 
