@@ -33,7 +33,7 @@ public class PacketSender : MBSingleton<PacketSender>
     const int aSize = 512;
 
     public uint actualSequence = 0;
-    public uint lastSequenceReceived = 1;
+    public uint lastSequenceReceived = 0;
     public uint lastSequenceProcessed = 0;
 
     AckData[] seqs = new AckData[aSize];

@@ -40,7 +40,7 @@ public struct Client
         this.packetsToProcess = new PacketToProcess[512];
 
         this.actualSequence = 0;
-        this.lastSequenceReceived = 1;
+        this.lastSequenceReceived = 0;
         this.lastSequenceProcessed = 0;
 
         state = ClientState.NotConnected;
