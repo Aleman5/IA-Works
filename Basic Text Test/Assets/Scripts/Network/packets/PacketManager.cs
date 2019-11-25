@@ -33,7 +33,9 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
             byte[] bytes = Serialize(packet, ref a, b, ref c, objectId, senderId, reliable);
 
-            PacketSender.Instance.SendGamePacket(bytes, reliable);
+            AckData[] d = new AckData[0];
+
+            PacketSender.Instance.SendGamePacket(bytes, ref a, ref d, null, reliable);
         }
         else
         {
@@ -45,7 +47,8 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
                     byte[] bytes = Serialize(packet, ref client.actualSequence, client.lastSequenceReceived, ref client.acks, objectId, senderId, reliable);
 
-                    PacketSender.Instance.SendGamePacket(bytes, reliable, client.ipEndPoint);
+                    //PacketSender.Instance.SendGamePacket(bytes, reliable, client);
+                    PacketSender.Instance.SendGamePacket(bytes, ref client.actualSequence, ref client.seqs, client.ipEndPoint, reliable);
                 }
             }
         }
@@ -79,7 +82,7 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     {
         MemoryStream stream = new MemoryStream();
         AckHeader ackHeader = new AckHeader();
-        
+
         PacketSender.Instance.SetAckHeaderData(ref ackHeader, ref _actualSequence, _lastSequenceReceived, ref _acks, reliable);
         ackHeader.Serialize(stream);
 

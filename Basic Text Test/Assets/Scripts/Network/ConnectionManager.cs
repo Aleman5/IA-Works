@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using UnityEngine;
 
-public struct Client
+public class Client
 {
     public enum ClientState
     {

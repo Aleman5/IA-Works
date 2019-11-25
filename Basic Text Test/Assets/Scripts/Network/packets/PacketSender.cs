@@ -46,7 +46,7 @@ public class PacketSender : MBSingleton<PacketSender>
         NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
     }
 
-    public void SendGamePacket(byte[] packetBytes, bool reliable = false, IPEndPoint clientObjective = null)
+    public void SendGamePacket(byte[] packetBytes, ref uint _actualSequence, ref AckData[] _seqs, IPEndPoint iPEndPoint, bool reliable = false)
     {
         if (reliable)
         {
@@ -58,7 +58,15 @@ public class PacketSender : MBSingleton<PacketSender>
             }
             else
             {
-                using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+                //uint index = clientObjective.actualSequence % aSize;
+                //clientObjective.seqs[index].sequence = clientObjective.actualSequence;
+                //clientObjective.seqs[index].packetBytes = packetBytes;
+
+                uint index = _actualSequence % aSize;
+                _seqs[index].sequence = _actualSequence;
+                _seqs[index].packetBytes = packetBytes;
+
+                /*using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
                 {
                     while (iterator.MoveNext())
                     {
@@ -68,14 +76,15 @@ public class PacketSender : MBSingleton<PacketSender>
                         client.seqs[index].sequence = client.actualSequence;
                         client.seqs[index].packetBytes = packetBytes;
                     }
-                }
+                }*/
             }
         }
 
         if (!NetworkManager.Instance.isServer)
             SendPacketToServer(packetBytes);
         else
-            SendPacketToClient(packetBytes, clientObjective);
+            //SendPacketToClient(packetBytes, clientObjective.ipEndPoint);
+            SendPacketToClient(packetBytes, iPEndPoint);
     }
 
     public void SendPacketToServer(byte[] bytes)
