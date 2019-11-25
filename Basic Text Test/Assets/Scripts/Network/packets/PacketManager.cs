@@ -27,15 +27,11 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
     {
         if (!NetworkManager.Instance.isServer)
         {
-            uint a = 0;
-            uint b = 0;
-            bool[] c = new bool[0];
-
-            byte[] bytes = Serialize(packet, ref a, b, ref c, objectId, senderId, reliable);
+            byte[] bytes = Serialize(packet, objectId, senderId, reliable);
 
             AckData[] d = new AckData[0];
 
-            PacketSender.Instance.SendGamePacket(bytes, ref a, ref d, null, reliable);
+            PacketSender.Instance.SendGamePacket(bytes, reliable);
         }
         else
         {
@@ -45,10 +41,10 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
                 {
                     Client client = iterator.Current.Value;
 
-                    byte[] bytes = Serialize(packet, ref client.actualSequence, client.lastSequenceReceived, ref client.acks, objectId, senderId, reliable);
+                    byte[] bytes = Serialize(packet, objectId, senderId, reliable, client);
 
                     //PacketSender.Instance.SendGamePacket(bytes, reliable, client);
-                    PacketSender.Instance.SendGamePacket(bytes, ref client.actualSequence, ref client.seqs, client.ipEndPoint, reliable);
+                    PacketSender.Instance.SendGamePacket(bytes, reliable, client);
                 }
             }
         }
@@ -58,32 +54,24 @@ public class PacketManager : Singleton<PacketManager>, IReceiveData
 
     public void SendPacketToServer<T>(NetworkPacket<T> packet)
     {
-        uint a = 0;
-        uint b = 0;
-        bool[] c = new bool[0];
-
-        byte[] bytes = Serialize(packet, ref a, b, ref c);
+        byte[] bytes = Serialize(packet);
 
         PacketSender.Instance.SendPacketToServer(bytes);
     }
 
     public void SendPacketToClient<T>(NetworkPacket<T> packet, IPEndPoint iPEndPoint)
     {
-        uint a = 0;
-        uint b = 0;
-        bool[] c = new bool[0];
-
-        byte[] bytes = Serialize(packet, ref a, b, ref c);
+        byte[] bytes = Serialize(packet);
 
         PacketSender.Instance.SendPacketToClient(bytes, iPEndPoint);
     }
 
-    byte[] Serialize<T>(NetworkPacket<T> packet, ref uint _actualSequence, uint _lastSequenceReceived, ref bool[] _acks, uint objectId = 0, uint senderId = 0, bool reliable = false)
+    byte[] Serialize<T>(NetworkPacket<T> packet, uint objectId = 0, uint senderId = 0, bool reliable = false, Client clientObjective = null)
     {
         MemoryStream stream = new MemoryStream();
         AckHeader ackHeader = new AckHeader();
 
-        PacketSender.Instance.SetAckHeaderData(ref ackHeader, ref _actualSequence, _lastSequenceReceived, ref _acks, reliable);
+        PacketSender.Instance.SetAckHeaderData(ref ackHeader, reliable, clientObjective);
         ackHeader.Serialize(stream);
 
         PacketHeader header = new PacketHeader();

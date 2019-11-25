@@ -46,7 +46,7 @@ public class PacketSender : MBSingleton<PacketSender>
         NetworkManager.Instance.OnReceiveEvent += OnReceiveData;
     }
 
-    public void SendGamePacket(byte[] packetBytes, ref uint _actualSequence, ref AckData[] _seqs, IPEndPoint iPEndPoint, bool reliable = false)
+    public void SendGamePacket(byte[] packetBytes, bool reliable = false, Client clientObjective = null)
     {
         if (reliable)
         {
@@ -58,13 +58,9 @@ public class PacketSender : MBSingleton<PacketSender>
             }
             else
             {
-                //uint index = clientObjective.actualSequence % aSize;
-                //clientObjective.seqs[index].sequence = clientObjective.actualSequence;
-                //clientObjective.seqs[index].packetBytes = packetBytes;
-
-                uint index = _actualSequence % aSize;
-                _seqs[index].sequence = _actualSequence;
-                _seqs[index].packetBytes = packetBytes;
+                uint index = clientObjective.actualSequence % aSize;
+                clientObjective.seqs[index].sequence = clientObjective.actualSequence;
+                clientObjective.seqs[index].packetBytes = packetBytes;
 
                 /*using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
                 {
@@ -83,8 +79,7 @@ public class PacketSender : MBSingleton<PacketSender>
         if (!NetworkManager.Instance.isServer)
             SendPacketToServer(packetBytes);
         else
-            //SendPacketToClient(packetBytes, clientObjective.ipEndPoint);
-            SendPacketToClient(packetBytes, iPEndPoint);
+            SendPacketToClient(packetBytes, clientObjective.ipEndPoint);
     }
 
     public void SendPacketToServer(byte[] bytes)
@@ -94,7 +89,6 @@ public class PacketSender : MBSingleton<PacketSender>
 
     public void SendPacketToClient(byte[] bytes, IPEndPoint iPEndPoint)
     {
-        Debug.Log("Sending: " + bytes.GetLength(0) + " to " + iPEndPoint);
         NetworkManager.Instance.SendToClient(bytes, iPEndPoint);
     }
 
@@ -113,7 +107,7 @@ public class PacketSender : MBSingleton<PacketSender>
     {
         MemoryStream stream = new MemoryStream(data);
         AckHeader ackHeader = new AckHeader();
-        if (!NetworkManager.Instance.isServer) Debug.Log("Packet Received from: " + iPEndPoint);
+        
         ackHeader.Deserialize(stream);
 
         if (ackHeader.reliable)
@@ -170,8 +164,6 @@ public class PacketSender : MBSingleton<PacketSender>
         if (ackHeader.sequence <= _lastSequenceProcessed)
             return;
 
-        Debug.Log("AckHeader.sequence: " + ackHeader.sequence + ", LastSequenceProcessed: " + _lastSequenceProcessed); // Probar esto de lado del server
-        
         if (ackHeader.sequence - _lastSequenceProcessed == 1)
         {
             PacketManager.Instance.OnReceiveData(data, iPEndPoint);
@@ -184,11 +176,11 @@ public class PacketSender : MBSingleton<PacketSender>
             {
                 PacketManager.Instance.OnReceiveData(_packetsToProcess[id].bytes, _packetsToProcess[id].iPEndPoint);
                 _packetsToProcess[id].Reset();
-                
-                _lastSequenceProcessed++;
+
+                ++_lastSequenceProcessed;
+
                 if (++id >= aSize)
                     id %= aSize;
-
             }
         }
         else
@@ -201,36 +193,36 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    public void SetAckHeaderData(ref AckHeader ackHeader, ref uint _actualSequence, uint _lastSequenceReceived, ref bool[] _acks, bool reliable = false)
+    public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable = false, Client clientObjective = null)
     {
         if (reliable)
         {
             if (!NetworkManager.Instance.isServer)
                 SetAckHeaderData(ref ackHeader, ref actualSequence, lastSequenceReceived, ref acks);
             else
-                SetAckHeaderData(ref ackHeader, ref _actualSequence, _lastSequenceReceived, ref _acks);
+                SetAckHeaderData(ref ackHeader, ref clientObjective.actualSequence, clientObjective.lastSequenceReceived, ref clientObjective.acks);
         }
     }
 
     private void SetAckHeaderData(ref AckHeader ackHeader, ref uint _actualSequence, uint _lastSequenceReceived, ref bool[] _acks)
     {
-            ackHeader.reliable = true;
-            ackHeader.sequence = ++_actualSequence;
-            ackHeader.ack = _lastSequenceReceived % aSize;
+        ackHeader.reliable = true;
+        ackHeader.sequence = ++_actualSequence;
+        ackHeader.ack = _lastSequenceReceived % aSize;
 
-            for (int i = 31; i >= 0 && i < _lastSequenceReceived; i--)
-            {
-                int id = ((int)(_lastSequenceReceived - i - 1)) % aSize;
+        for (int i = 31; i >= 0 && i < _lastSequenceReceived; i--)
+        {
+            int id = ((int)(_lastSequenceReceived - i - 1)) % aSize;
             
-                if (_acks[id])
-                {
-                    _acks[id] = false;
-                    ackHeader.ackBits |= (uint)(1 << i);
-                }
-
-                //if (_seqs[id].sequence != 0)
-                //    ackHeader.ackBits |= (uint)(1 << i);
+            if (_acks[id])
+            {
+                _acks[id] = false;
+                ackHeader.ackBits |= (uint)(1 << i);
             }
+
+            //if (_seqs[id].sequence != 0)
+            //    ackHeader.ackBits |= (uint)(1 << i);
+        }
     }
 
     /* ---------------  Packet bombardier  --------------- */
