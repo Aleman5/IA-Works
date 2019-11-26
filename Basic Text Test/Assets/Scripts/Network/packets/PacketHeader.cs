@@ -74,7 +74,8 @@ public class AckHeader : ISerializePacket
 
 public class ProtocolHeader : ISerializePacket
 {
-    public uint myCRC;
+    public uint packetCRC = 0;
+    public uint acksCRC = 0;
     public int acksBytesCount = 0;
     public int packetBytesCount = 0;
     public byte[] acksBytes;
@@ -84,11 +85,15 @@ public class ProtocolHeader : ISerializePacket
     {
         BinaryWriter binaryWriter = new BinaryWriter(stream);
 
-        binaryWriter.Write(myCRC);
-        binaryWriter.Write(acksBytesCount);
+        binaryWriter.Write(packetCRC);
+        binaryWriter.Write(acksCRC);
         binaryWriter.Write(packetBytesCount);
-        binaryWriter.Write(acksBytes);
         binaryWriter.Write(packetBytes);
+        if (acksCRC != 0)
+        {
+            binaryWriter.Write(acksBytesCount);
+            binaryWriter.Write(acksBytes);
+        }
 
         OnSerialize(stream);
     }
@@ -97,12 +102,15 @@ public class ProtocolHeader : ISerializePacket
     {
         BinaryReader binaryReader = new BinaryReader(stream);
 
-        myCRC = binaryReader.ReadUInt32();
-        acksBytesCount = binaryReader.ReadInt32();
+        packetCRC = binaryReader.ReadUInt32();
+        acksCRC = binaryReader.ReadUInt32();
         packetBytesCount = binaryReader.ReadInt32();
-        if (acksBytesCount != 0)
-            acksBytes = binaryReader.ReadBytes(acksBytesCount);
         packetBytes = binaryReader.ReadBytes(packetBytesCount);
+        if (acksCRC != 0)
+        {
+            acksBytesCount = binaryReader.ReadInt32();
+            acksBytes = binaryReader.ReadBytes(acksBytesCount);
+        }
 
         OnDeserialize(stream);
     }
