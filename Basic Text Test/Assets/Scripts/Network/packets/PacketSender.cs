@@ -48,38 +48,47 @@ public class PacketSender : MBSingleton<PacketSender>
 
     public void SendGamePacket(byte[] packetBytes, bool reliable = false, Client clientObjective = null)
     {
+        MemoryStream stream = new MemoryStream();
+        ProtocolHeader protocolHeader = new ProtocolHeader();
+
+        protocolHeader.myCRC = CRC32.ComputeChecksum(packetBytes);
+        protocolHeader.packetBytes = packetBytes;
+        protocolHeader.packetBytesCount = packetBytes.Length;
+
         if (reliable)
         {
             if (!NetworkManager.Instance.isServer)
             {
+                byte[] acksBytes = MakeAckBytes(reliable, clientObjective);
+
+                protocolHeader.acksBytes = acksBytes;
+                protocolHeader.acksBytesCount = acksBytes.Length;
+
                 uint index = actualSequence % aSize;
                 seqs[index].sequence = actualSequence;
                 seqs[index].packetBytes = packetBytes;
             }
             else
             {
+                byte[] acksBytes = MakeAckBytes(reliable, clientObjective);
+
+                protocolHeader.acksBytes = acksBytes;
+                protocolHeader.acksBytesCount = acksBytes.Length;
+
                 uint index = clientObjective.actualSequence % aSize;
                 clientObjective.seqs[index].sequence = clientObjective.actualSequence;
                 clientObjective.seqs[index].packetBytes = packetBytes;
-
-                /*using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
-                {
-                    while (iterator.MoveNext())
-                    {
-                        Client client = iterator.Current.Value;
-
-                        uint index = client.actualSequence % aSize;
-                        client.seqs[index].sequence = client.actualSequence;
-                        client.seqs[index].packetBytes = packetBytes;
-                    }
-                }*/
             }
         }
 
+        protocolHeader.Serialize(stream);
+
+        stream.Close();
+
         if (!NetworkManager.Instance.isServer)
-            SendPacketToServer(packetBytes);
+            SendPacketToServer(stream.ToArray());
         else
-            SendPacketToClient(packetBytes, clientObjective.ipEndPoint);
+            SendPacketToClient(stream.ToArray(), clientObjective.ipEndPoint);
     }
 
     public void SendPacketToServer(byte[] bytes)
@@ -106,40 +115,56 @@ public class PacketSender : MBSingleton<PacketSender>
     public void OnReceiveData(byte[] data, IPEndPoint iPEndPoint)
     {
         MemoryStream stream = new MemoryStream(data);
-        AckHeader ackHeader = new AckHeader();
-        
-        ackHeader.Deserialize(stream);
 
-        if (ackHeader.reliable)
+        ProtocolHeader protocolHeader = new ProtocolHeader();
+        protocolHeader.Deserialize(stream);
+
+        if (protocolHeader.myCRC != CRC32.ComputeChecksum(protocolHeader.packetBytes))
+            return;
+
+        if (protocolHeader.acksBytesCount != 0)
         {
-            if (!NetworkManager.Instance.isServer)
-            {
-                if (ackHeader.sequence > lastSequenceProcessed)
-                {
-                    ManageAcks(ackHeader, ref seqs, ref acks, ref lastSequenceReceived);
-                    ManageReliablePacket(data, iPEndPoint, ref ackHeader, ref packetsToProcess, ref lastSequenceProcessed);
-                }
-            }
-            else
-            {
-                using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
-                {
-                    while (iterator.MoveNext())
-                    {
-                        Client client = iterator.Current.Value;
+            MemoryStream ackStream = new MemoryStream(protocolHeader.acksBytes);
 
-                        if (ackHeader.sequence > client.lastSequenceProcessed)
+            AckHeader ackHeader = new AckHeader();
+        
+            ackHeader.Deserialize(ackStream);
+
+            if (ackHeader.reliable)
+            {
+                if (!NetworkManager.Instance.isServer)
+                {
+                    if (ackHeader.sequence > lastSequenceProcessed)
+                    {
+                        ManageAcks(ackHeader, ref seqs, ref acks, ref lastSequenceReceived);
+                        ManageReliablePacket(protocolHeader.packetBytes, iPEndPoint, ref ackHeader, ref packetsToProcess, ref lastSequenceProcessed);
+                    }
+                }
+                else
+                {
+                    using (var iterator = ConnectionManager.Instance.clients.GetEnumerator())
+                    {
+                        while (iterator.MoveNext())
                         {
-                            ManageAcks(ackHeader, ref client.seqs, ref client.acks, ref client.lastSequenceReceived);
-                            ManageReliablePacket(data, iPEndPoint, ref ackHeader, ref client.packetsToProcess, ref client.lastSequenceProcessed);
+                            Client client = iterator.Current.Value;
+
+                            if (ackHeader.sequence > client.lastSequenceProcessed)
+                            {
+                                ManageAcks(ackHeader, ref client.seqs, ref client.acks, ref client.lastSequenceReceived);
+                                ManageReliablePacket(protocolHeader.packetBytes, iPEndPoint, ref ackHeader, ref client.packetsToProcess, ref client.lastSequenceProcessed);
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                PacketManager.Instance.OnReceiveData(protocolHeader.packetBytes, iPEndPoint);
+            }
         }
         else
         {
-            PacketManager.Instance.OnReceiveData(data, iPEndPoint);
+            PacketManager.Instance.OnReceiveData(protocolHeader.packetBytes, iPEndPoint);
         }
     }
 
@@ -193,7 +218,21 @@ public class PacketSender : MBSingleton<PacketSender>
         }
     }
 
-    public void SetAckHeaderData(ref AckHeader ackHeader, bool reliable = false, Client clientObjective = null)
+    private byte[] MakeAckBytes(bool reliable, Client clientObjective)
+    {
+        MemoryStream stream = new MemoryStream();
+
+        AckHeader ackHeader = new AckHeader();
+
+        SetAckHeaderData(ref ackHeader, reliable, clientObjective);
+        ackHeader.Serialize(stream);
+
+        stream.Close();
+
+        return stream.ToArray();
+    }
+
+    private void SetAckHeaderData(ref AckHeader ackHeader, bool reliable, Client clientObjective)
     {
         if (reliable)
         {

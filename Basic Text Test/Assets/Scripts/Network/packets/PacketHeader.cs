@@ -71,3 +71,42 @@ public class AckHeader : ISerializePacket
     virtual protected void OnSerialize(Stream stream) { }
     virtual protected void OnDeserialize(Stream stream) { }
 }
+
+public class ProtocolHeader : ISerializePacket
+{
+    public uint myCRC;
+    public int acksBytesCount = 0;
+    public int packetBytesCount = 0;
+    public byte[] acksBytes;
+    public byte[] packetBytes;
+
+    public void Serialize(Stream stream)
+    {
+        BinaryWriter binaryWriter = new BinaryWriter(stream);
+
+        binaryWriter.Write(myCRC);
+        binaryWriter.Write(acksBytesCount);
+        binaryWriter.Write(packetBytesCount);
+        binaryWriter.Write(acksBytes);
+        binaryWriter.Write(packetBytes);
+
+        OnSerialize(stream);
+    }
+
+    public void Deserialize(Stream stream)
+    {
+        BinaryReader binaryReader = new BinaryReader(stream);
+
+        myCRC = binaryReader.ReadUInt32();
+        acksBytesCount = binaryReader.ReadInt32();
+        packetBytesCount = binaryReader.ReadInt32();
+        if (acksBytesCount != 0)
+            acksBytes = binaryReader.ReadBytes(acksBytesCount);
+        packetBytes = binaryReader.ReadBytes(packetBytesCount);
+
+        OnDeserialize(stream);
+    }
+
+    virtual protected void OnSerialize(Stream stream) { }
+    virtual protected void OnDeserialize(Stream stream) { }
+}
