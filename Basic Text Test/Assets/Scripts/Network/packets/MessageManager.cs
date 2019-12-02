@@ -16,12 +16,44 @@ public class MessageManager : Singleton<MessageManager>
         PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }
 
-    public void SendEntityInfo(Vector3 position, Quaternion rotation, uint objectId, uint senderId)
+    public void SendEntityInfo(Vector3 position, Quaternion rotation, Quaternion bodyRotation, bool killer, uint clientId, uint objectId, uint senderId)
     {
         PositionPacket packet = new PositionPacket(senderId);
 
         packet.payload.pos = position;
         packet.payload.rot = rotation;
+        packet.payload.bodyRot = bodyRotation;
+        packet.payload.killer = killer;
+        packet.payload.clientdIdKilled = clientId;
+
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
+    }
+
+    public void SendShootInfo(Vector3 position, Vector3 forward, byte damage, uint objectId, uint senderId)
+    {
+        ShootPacket packet = new ShootPacket(senderId);
+
+        packet.payload.pos = position;
+        packet.payload.fwd = forward;
+        packet.payload.damage = damage;
+
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
+    }
+
+    public void SendHitInfo(byte damage, uint objectId, uint senderId)
+    {
+        HitPacket packet = new HitPacket(senderId);
+
+        packet.payload.damage = damage;
+
+        PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
+    }
+
+    public void SendReload(uint objectId, uint senderId)
+    {
+        ReloadPacket packet = new ReloadPacket(senderId);
+
+        packet.payload = false;
 
         PacketManager.Instance.SendGamePacket(packet, objectId, senderId, true);
     }

@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour {
     [SerializeField] private int currentBullets;                           
 
     [SerializeField] private Text ammoText;
-    [SerializeField] private Transform shootPoint;                         
+    [SerializeField] private Transform shootPoint;
     [SerializeField] private GameObject hitParticles;
     [SerializeField] private GameObject bulletImpact;
     //[SerializeField] private GameObject thisWeapon;
@@ -23,17 +23,18 @@ public class Weapon : MonoBehaviour {
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private AudioClip shootSound;
 
-    [SerializeField] private float fireRate = 0.1f;                         
+    [SerializeField] private float fireRate = 0.1f;
     [SerializeField] private int damage = 20;
 
-    float fireTimer;                                                    
+    float fireTimer;
 
-    private bool isReloading;                                               
+    private bool isReloading;
+
+    uint objectId = 42;
 
     private void OnEnable()
     {
         UpdadateAmmoText();
-        
     }
 
     void Start()
@@ -51,7 +52,7 @@ public class Weapon : MonoBehaviour {
         if (Input.GetButton("Fire1"))
         {
             if (currentBullets > 0)
-                Fire();                                                     
+                Fire();
             else if(bulletsLeft > 0)
                 DoReload();
         }
@@ -63,35 +64,46 @@ public class Weapon : MonoBehaviour {
         }
 
         if (fireTimer < fireRate)
-            fireTimer += Time.deltaTime;                                    
+            fireTimer += Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
 
-        isReloading = info.IsName("Recharge");                                
+        isReloading = info.IsName("Recharge");
     }
 
     private void Fire()
-    {                                                                      
+    {
         if (fireTimer < fireRate || currentBullets <= 0 || isReloading) return; 
 
-        RaycastHit hit;                                                    
-
-        if (Physics.Raycast(shootPoint.position, shootPoint.transform.forward, out hit, range))
+        if (NetworkManager.Instance.isServer)
         {
-            // HIT SOMEONE
+            RaycastHit hit;                                                    
+
+            if (Physics.Raycast(shootPoint.position, shootPoint.transform.forward, out hit, range))
+            {
+                if (hit.transform.tag == "Player")
+                {
+                    Debug.Log("On Enemy Hit");
+                    MessageManager.Instance.SendHitInfo((byte)damage, objectId + 1, ConnectionManager.Instance.clientId);
+                }
+            }
+        }
+        else
+        {
+            MessageManager.Instance.SendShootInfo(shootPoint.position, shootPoint.forward, (byte)damage, objectId, ConnectionManager.Instance.clientId);
         }
 
-        anim.CrossFadeInFixedTime("Shot", 0.01f);                           
-        muzzleFlash.Play();                                                 
-        PlayShootSound();                                                   
+        anim.CrossFadeInFixedTime("Shot", 0.01f);
+        muzzleFlash.Play();
+        PlayShootSound();
 
         currentBullets--;
         UpdadateAmmoText();
 
-        fireTimer = 0.0f;                                                  
+        fireTimer = 0.0f;
     }
 
     public void Reload()

@@ -16,7 +16,7 @@ public class GameManager : MBSingleton<GameManager>
 
     List<GameObject> coins = new List<GameObject>();
 
-    public void StartGame(bool isServer = true)
+    /*public void StartGame(bool isServer = true)
     {
         ActivateElements();
         AddComponents(isServer);
@@ -78,5 +78,5 @@ public class GameManager : MBSingleton<GameManager>
 
             myPlayer.AddComponent<PlayerUDP>();
         }
-    }
+    }*/
 }

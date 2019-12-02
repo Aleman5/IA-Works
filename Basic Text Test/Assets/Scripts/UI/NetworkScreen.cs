@@ -29,16 +29,16 @@ public class NetworkScreen : MBSingleton<NetworkScreen>
     {
         Debug.Log("Connected: " + state);
         SwitchToNextScreen();
-        GameManager.Instance.UserConnected();
+        FPSGameManager.Instance.UserConnected();
     }
 
     void OnStartServerBtnClick()
     {
         int port = System.Convert.ToInt32(portInputField.text);
-        if (ConnectionManager.Instance.StartServer(port, GameManager.Instance.StartGame))
+        if (ConnectionManager.Instance.StartServer(port, FPSGameManager.Instance.StartGame))
         {
             SwitchToNextScreen();
-            UIManager.Instance.OnStartWaiting();
+            FPSUIManager.Instance.OnStartWaiting();
         }
     }
 

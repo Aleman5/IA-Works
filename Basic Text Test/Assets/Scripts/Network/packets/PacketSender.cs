@@ -194,7 +194,6 @@ public class PacketSender : MBSingleton<PacketSender>
 
         for (int i = (int)Mathf.Min(31, ackHeader.ack); i >= 0; i--)
         {
-            Debug.Log(ackHeader.ack - i - 1);
             if ((ackHeader.ackBits & (1 << i)) != 0)
                 _seqs[(ackHeader.ack - i - 1) % aSize].Reset();
         }

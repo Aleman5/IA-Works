@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerLook : MonoBehaviour
 {
     [SerializeField] private Transform playerBody;
-    [SerializeField] private float mouseSensitivity;
+    [SerializeField] private float speed;
+    [SerializeField] private PlayerMove playerMove;
 
     private float xAxisClamp = 0.0f;
 
@@ -24,8 +25,8 @@ public class PlayerLook : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        float rotAmountX = mouseX * mouseSensitivity;
-        float rotAmountY = mouseY * mouseSensitivity;
+        float rotAmountX = mouseX * speed * Time.deltaTime;
+        float rotAmountY = mouseY * speed * Time.deltaTime;
 
         xAxisClamp -= rotAmountY;
 
@@ -49,5 +50,8 @@ public class PlayerLook : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(targetRotCam);
         playerBody.rotation = Quaternion.Euler(targetRotBody);
+
+        if (mouseX != 0 || mouseY != 0)
+            playerMove.positionChanged = true;
     }
 }

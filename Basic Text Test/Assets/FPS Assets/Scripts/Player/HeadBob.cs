@@ -7,7 +7,7 @@ public class HeadBob : MonoBehaviour {
     private float timer = 0.0f;
     [SerializeField] float bobbingSpeed = 0.18f;
     [SerializeField] float bobbingAmount = 0.2f;
-    [SerializeField] float midpoint = 2.0f;
+    [SerializeField] float midpoint = 0.8f;
 
     void Update()
     {

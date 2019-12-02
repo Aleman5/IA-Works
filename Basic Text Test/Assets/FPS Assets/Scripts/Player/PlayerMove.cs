@@ -9,6 +9,12 @@ public class PlayerMove : MonoBehaviour
     //public GameObject weapon;
     //private Animator anim;
 
+    public Transform bodyTransform;
+
+    [HideInInspector] public bool positionChanged = false;
+    uint playerObjectId = 40;
+    uint pointsObjectId = 41;
+
     void Awake()
     {
         charControl = GetComponent<CharacterController>();
@@ -27,20 +33,29 @@ public class PlayerMove : MonoBehaviour
 
         if (horiz != 0)
         {
+            positionChanged = true;
             PlayAnimation();
         }
         if (vert != 0)
         {
+            positionChanged = true;
             PlayAnimation();
         }
 
-        Vector3 moveDirSide = transform.right * horiz * walkSpeed;
-        Vector3 moveDirForward = transform.forward * vert * walkSpeed;
+        Vector3 moveDirSide = transform.right * horiz * walkSpeed * Time.deltaTime;
+        Vector3 moveDirForward = transform.forward * vert * walkSpeed * Time.deltaTime;
 
         charControl.SimpleMove(moveDirSide);
         charControl.SimpleMove(moveDirForward);
+    }
 
-        
+    void LateUpdate()
+    {
+        if (positionChanged)
+        {
+            MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, bodyTransform.rotation, false, 0, playerObjectId, ConnectionManager.Instance.clientId);
+            positionChanged = false;
+        }
     }
 
     void PlayAnimation()

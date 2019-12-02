@@ -2,14 +2,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MBSingleton<UIManager>
+public class FPSUIManager : MBSingleton<FPSUIManager>
 {
     [Header("Texts")]
     public Text waitingTxt;
     public Text scoreTxt;
     public Text enemyScoreTxt;
+    public Image barImg;
 
-    uint objectId = 2;
+    uint objectId = 41;
 
     void OnEnable()
     {
@@ -47,8 +48,18 @@ public class UIManager : MBSingleton<UIManager>
         waitingTxt.enabled = true;
     }
 
-    public void OnScoreChange(int score)
+    public void OnEnemyKilled(int kills)
     {
-        scoreTxt.text = "My score: " + score;
+        scoreTxt.text = "My kills: " + kills;
+    }
+
+    public void OnEnemyKillsChanged(int kills) // In case of having multiple clients, here, I must add a clientId.
+    {
+        enemyScoreTxt.text = "Enemy kills: " + kills;
+    }
+
+    public void OnHealthChange(int healthAmount)
+    {
+        barImg.fillAmount = healthAmount * 0.01f;
     }
 }
