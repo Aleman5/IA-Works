@@ -8,7 +8,10 @@ public class FPSUIManager : MBSingleton<FPSUIManager>
     public Text waitingTxt;
     public Text scoreTxt;
     public Text enemyScoreTxt;
-    public Image barImg;
+    public Text timerTxt;
+    public Text finalStateTxt;
+    public Image emptyBarImg;
+    public Image healthBarImg;
 
     uint objectId = 41;
 
@@ -41,7 +44,9 @@ public class FPSUIManager : MBSingleton<FPSUIManager>
         waitingTxt.enabled = false;
         scoreTxt.enabled = true;
         enemyScoreTxt.enabled = true;
-        barImg.enabled = true;
+        timerTxt.enabled = true;
+        emptyBarImg.enabled = true;
+        healthBarImg.enabled = true;
     }
 
     public void OnStartWaiting()
@@ -59,8 +64,24 @@ public class FPSUIManager : MBSingleton<FPSUIManager>
         enemyScoreTxt.text = "Enemy kills: " + kills;
     }
 
+    public void OnTimeChange(float timeLeft)
+    {
+        string minutes = Mathf.Floor(timeLeft * 0.0167f).ToString("00");
+        string seconds = Mathf.Floor(timeLeft % 60).ToString("00");
+
+        timerTxt.text = minutes + ":" + seconds;
+    }
+
     public void OnHealthChange(int healthAmount)
     {
-        barImg.fillAmount = healthAmount * 0.01f;
+        healthBarImg.fillAmount = healthAmount * 0.01f;
+    }
+
+    public void OnMatchFinished(bool win)
+    {
+        finalStateTxt.enabled = true;
+
+        if (!win)
+            finalStateTxt.text = "You lose!! :(";
     }
 }
