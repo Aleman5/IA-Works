@@ -238,7 +238,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207615566}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.5, y: 2.27, z: -9.5}
+  m_LocalPosition: {x: 9.5, y: 1.08, z: -9.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1066463613}
@@ -998,7 +998,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 569182292}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.5, y: 2.27, z: -9.5}
+  m_LocalPosition: {x: -9.5, y: 1.08, z: -9.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1066463613}
@@ -1194,7 +1194,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677692857}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.5, y: 2.27, z: 9.5}
+  m_LocalPosition: {x: -9.5, y: 1.08, z: 9.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1066463613}
@@ -1576,7 +1576,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000787656}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.5, y: 2.27, z: 9.5}
+  m_LocalPosition: {x: 9.5, y: 1.08, z: 9.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1066463613}
@@ -1859,9 +1859,9 @@ MonoBehaviour:
   scoreTxt: {fileID: 246534287}
   enemyScoreTxt: {fileID: 1719273814}
   timerTxt: {fileID: 1532849808}
+  finalStateTxt: {fileID: 426402842}
   emptyBarImg: {fileID: 573095451}
   healthBarImg: {fileID: 1764724239}
-  finalStateTxt: {fileID: 426402842}
 --- !u!114 &1296157269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1875,6 +1875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   matchTime: 60
+  closeTime: 2
   myPlayerGO: {fileID: 1343029668, guid: 83cebd726a96af14493d13f2ef73a57c, type: 3}
   enemyPlayerGO: {fileID: 1343029668, guid: 1cb6921c40f0cf840874501ae8cc6d76, type: 3}
   serverSpawnPoint: {fileID: 569182293}
