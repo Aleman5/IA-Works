@@ -31,6 +31,9 @@ public class FPSPlayerInfo : MonoBehaviour
                 transform.position = positionPacket.payload.pos;
                 transform.rotation = positionPacket.payload.rot;
                 transform.rotation = positionPacket.payload.bodyRot;
+
+                if (positionPacket.payload.killer)
+                    FPSGameManager.Instance.OnKill();
             break;
 
             case UserPacketType.Score:

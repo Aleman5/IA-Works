@@ -433,7 +433,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'My score: 0'
+  m_Text: 'My kills: 0'
 --- !u!222 &246534288
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2184,7 +2184,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Enemy score: 0'
+  m_Text: 'Enemy kills: 0'
 --- !u!222 &1719273815
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -15,6 +15,7 @@ public class FPSGameManager : MBSingleton<FPSGameManager>
 
 
     int kills = 0;
+    int enemyKills = 0;
 
     public void StartGame(bool isServer = true)
     {
@@ -40,5 +41,10 @@ public class FPSGameManager : MBSingleton<FPSGameManager>
     public void OnKill()
     {
         FPSUIManager.Instance.OnEnemyKilled(++kills);
+    }
+
+    public void OnDeath()
+    {
+        FPSUIManager.Instance.OnDeath(++enemyKills);
     }
 }

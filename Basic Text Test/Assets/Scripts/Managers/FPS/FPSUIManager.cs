@@ -41,6 +41,7 @@ public class FPSUIManager : MBSingleton<FPSUIManager>
         waitingTxt.enabled = false;
         scoreTxt.enabled = true;
         enemyScoreTxt.enabled = true;
+        barImg.enabled = true;
     }
 
     public void OnStartWaiting()
@@ -53,7 +54,7 @@ public class FPSUIManager : MBSingleton<FPSUIManager>
         scoreTxt.text = "My kills: " + kills;
     }
 
-    public void OnEnemyKillsChanged(int kills) // In case of having multiple clients, here, I must add a clientId.
+    public void OnDeath(int kills) // In case of having multiple clients, here, I must add a clientId. Also, this function should be named OnEnemyKillsChanged
     {
         enemyScoreTxt.text = "Enemy kills: " + kills;
     }

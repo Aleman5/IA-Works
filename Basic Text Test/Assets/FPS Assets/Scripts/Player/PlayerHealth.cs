@@ -53,6 +53,8 @@ public class PlayerHealth : MonoBehaviour
 
             MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, transform.rotation, true, tempSenderId, playerObjectId, ConnectionManager.Instance.clientId);
 
+            FPSGameManager.Instance.OnDeath();
+
             death = false;
         }
     }
