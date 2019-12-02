@@ -86,7 +86,6 @@ public class Weapon : MonoBehaviour {
             {
                 if (hit.transform.tag == "Player")
                 {
-                    Debug.Log("On Enemy Hit");
                     MessageManager.Instance.SendHitInfo((byte)damage, objectId + 1, ConnectionManager.Instance.clientId);
                 }
             }

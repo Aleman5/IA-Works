@@ -13,6 +13,9 @@ public class PlayerHealth : MonoBehaviour
     uint playerObjectId = 40;
     uint healthObjectId = 43;
 
+    uint tempSenderId = 0;
+    public bool death = false;
+    
 
     void Awake()
     {
@@ -23,7 +26,6 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(int amount, uint senderId)
     {
         currentHealth -= amount;
-        Debug.Log("On TakeDamage: " + ConnectionManager.Instance.clientId);
 
         playerAudio.Play();
 
@@ -35,19 +37,28 @@ public class PlayerHealth : MonoBehaviour
 
     void Death(uint senderId)
     {
+        death = true;
+        tempSenderId = senderId;
         currentHealth = startingHealth;
+    }
 
-        Transform spawnPoint = FPSGameManager.Instance.spawnPoints[Random.Range(0, 4)];
+    void LateUpdate()
+    {
+        if (death)
+        {
+            Transform spawnPoint = FPSGameManager.Instance.spawnPoints[Random.Range(0, 4)];
 
-        transform.position = spawnPoint.position;
-        transform.rotation = spawnPoint.rotation;
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation;
 
-        MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, transform.rotation, true, senderId, playerObjectId, ConnectionManager.Instance.clientId);
+            MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, transform.rotation, true, tempSenderId, playerObjectId, ConnectionManager.Instance.clientId);
+
+            death = false;
+        }
     }
 
     void OnEnable()
     {
-        Debug.Log("Gola");
         PacketManager.Instance.AddListenerByObjectId(healthObjectId, OnReceivePacket);
     }
 
@@ -63,7 +74,6 @@ public class PlayerHealth : MonoBehaviour
             case UserPacketType.Hit:
                 HitPacket hitPacket = new HitPacket();
                 hitPacket.Deserialize(stream);
-                Debug.Log("On HitPacket Received");
                 TakeDamage(hitPacket.payload.damage, hitPacket.senderId);
             break;
         }

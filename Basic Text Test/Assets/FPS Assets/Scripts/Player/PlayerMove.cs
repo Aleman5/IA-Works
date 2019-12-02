@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    CharacterController charControl;
     public float walkSpeed;
     //public GameObject weapon;
     //private Animator anim;
@@ -12,12 +11,16 @@ public class PlayerMove : MonoBehaviour
     public Transform bodyTransform;
 
     [HideInInspector] public bool positionChanged = false;
+    CharacterController charControl;
+    PlayerHealth playerHealth;
+
     uint playerObjectId = 40;
     uint pointsObjectId = 41;
 
     void Awake()
     {
         charControl = GetComponent<CharacterController>();
+        playerHealth = GetComponent<PlayerHealth>();
         //anim = weapon.GetComponent<Animator>();
     }
 
@@ -45,13 +48,16 @@ public class PlayerMove : MonoBehaviour
         Vector3 moveDirSide = transform.right * horiz * walkSpeed * Time.deltaTime;
         Vector3 moveDirForward = transform.forward * vert * walkSpeed * Time.deltaTime;
 
-        charControl.SimpleMove(moveDirSide);
-        charControl.SimpleMove(moveDirForward);
+        if (!playerHealth.death)
+        {
+            charControl.SimpleMove(moveDirSide);
+            charControl.SimpleMove(moveDirForward);
+        }
     }
 
     void LateUpdate()
     {
-        if (positionChanged)
+        if (positionChanged && !playerHealth.death)
         {
             MessageManager.Instance.SendEntityInfo(transform.position, transform.rotation, bodyTransform.rotation, false, 0, playerObjectId, ConnectionManager.Instance.clientId);
             positionChanged = false;

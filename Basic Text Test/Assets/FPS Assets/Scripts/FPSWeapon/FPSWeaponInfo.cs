@@ -24,7 +24,6 @@ public class FPSWeaponInfo : MonoBehaviour
 
     void OnReceivePacket(uint packetId, ushort type, Stream stream)
     {
-        Debug.Log("Hola: " + (UserPacketType)type);
         switch ((UserPacketType)type)
         {
             case UserPacketType.Shoot:
@@ -41,7 +40,6 @@ public class FPSWeaponInfo : MonoBehaviour
                     {
                         if (hit.transform.tag == "Player")
                         {
-                            Debug.Log("On Damage Received");
                             playerHealth.TakeDamage(shootPacket.payload.damage, shootPacket.senderId);
                         }
                     }
